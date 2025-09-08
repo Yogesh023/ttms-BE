@@ -16,8 +16,8 @@ public class VendorServiceImpl implements VendorService {
 
     private final VendorRepo vendorRepo;
 
-    public VendorServiceImpl(VendorRepo vendorRepo){
-        this.vendorRepo=vendorRepo;
+    public VendorServiceImpl(VendorRepo vendorRepo) {
+        this.vendorRepo = vendorRepo;
     }
 
     @Override
@@ -38,15 +38,30 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor getVendorById(String vendorId) {
-        
-        return vendorRepo.findById(vendorId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found"));
-        // Vendor vendor = vendorRepo.findById(vendorId);
-        // if (vendor != null) {
-        //     return ResponseEntity.ok(vendor);
-        // } else {
-        //     return ResponseEntity.notFound().build();
-        // }
+
+        return vendorRepo.findById(vendorId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found"));
     }
-    
-    
+
+    @Override
+    public Vendor updateVendor(String id, VendorDTO vendorDto) {
+        Vendor existing = vendorRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found"));
+
+        existing.setVendorId(vendorDto.getVendorId());
+        existing.setVendorName(vendorDto.getVendorName());
+        existing.setCity(vendorDto.getCity());
+        existing.setLocations(vendorDto.getLocations());
+
+        return vendorRepo.save(existing);
+    }
+
+    @Override
+    public void deleteVendor(String id) {
+        if (!vendorRepo.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found");
+        }
+        vendorRepo.deleteById(id);
+    }
+
 }

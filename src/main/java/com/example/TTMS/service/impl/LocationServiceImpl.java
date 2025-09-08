@@ -35,4 +35,23 @@ public class LocationServiceImpl implements LocationService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
     }
 
+    @Override
+    public Location updateLocation(String id, Location location) {
+        Location existingLocation = locationRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
+        existingLocation.setCity(location.getCity());
+        existingLocation.setLocationId(location.getLocationId());
+        existingLocation.setLocationName(location.getLocationName());
+
+        return locationRepo.save(existingLocation);
+    }
+
+    @Override
+    public void deleteLocation(String id) {
+        if (!locationRepo.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found");
+        }
+        locationRepo.deleteById(id);
+    }
+
 }

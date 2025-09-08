@@ -12,5 +12,8 @@ public interface VendorService {
     List<Vendor> getAllVendors();
 
     Vendor getVendorById(String vendorId);
-    
+
+    Vendor updateVendor(String id, VendorDTO vendorDto);
+
+    void deleteVendor(String id);
 }

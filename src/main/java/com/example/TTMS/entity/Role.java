@@ -7,16 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "location")
+@Document(collection = "role")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Location {
+public class Role {
 
     @Id
     private String id;
-    private String city;
-    private String locationId;
-    private String locationName;
-
+    private String role;
+    
 }

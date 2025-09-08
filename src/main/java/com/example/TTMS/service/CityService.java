@@ -10,5 +10,9 @@ public interface CityService{
     List<City> getAllCity();
 
     City getCityById(String id);
+
+    City updateCity(String id, City city);
+
+    void deleteCity(String id);
     
 }

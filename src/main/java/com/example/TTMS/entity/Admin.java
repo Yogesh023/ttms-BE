@@ -7,16 +7,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "location")
+@Document(collection = "admin")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Location {
+public class Admin {
 
     @Id
     private String id;
-    private String city;
-    private String locationId;
-    private String locationName;
+    private String userId;
+    private String name;
+    private String email;
+    private String password;
+    private String mobile;
+    private Role role;
 
 }
