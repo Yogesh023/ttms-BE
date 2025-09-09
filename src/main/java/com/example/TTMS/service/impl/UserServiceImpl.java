@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.TTMS.dto.Login;
+import com.example.TTMS.dto.UserDto;
+import com.example.TTMS.entity.City;
 import com.example.TTMS.entity.User;
+import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.repository.UserRepo;
 import com.example.TTMS.service.UserService;
 
@@ -17,15 +20,27 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
+    private final CityRepo cityRepo;
 
-    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder, CityRepo cityRepo) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
+        this.cityRepo = cityRepo;
     }
 
     @Override
-    public User addUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public User addUser(UserDto userDto) {
+
+        User user = new User();
+        boolean userIdExists = userRepo.findByUserId(userDto.getUserId()).isPresent();
+        if (userIdExists) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "UserId already exists");
+        }
+
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        City city = cityRepo.findById(userDto.getCityId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+        user.setCity(city);
         return userRepo.save(user);
     }
 
@@ -54,33 +69,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(String id, User user) {
+    public User updateUser(String id, UserDto userDto) {
         User existing = userRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        if (user.getUserId() != null && !user.getUserId().isBlank()) {
-            existing.setUserId(user.getUserId());
+        if (userDto.getUserId() != null && !userDto.getUserId().isBlank()) {
+            existing.setUserId(userDto.getUserId());
         }
-        if (user.getUsername() != null && !user.getUsername().isBlank()) {
-            existing.setUsername(user.getUsername());
+        if (userDto.getUsername() != null && !userDto.getUsername().isBlank()) {
+            existing.setUsername(userDto.getUsername());
         }
-        if (user.getLocations() != null && !user.getLocations().isEmpty()) {
-            existing.setLocations(user.getLocations());
+        if (userDto.getLocations() != null && !userDto.getLocations().isEmpty()) {
+            existing.setLocations(userDto.getLocations());
         }
-        if (user.getMobileNo() != null && !user.getMobileNo().isBlank()) {
-            existing.setMobileNo(user.getMobileNo());
+        if (userDto.getMobileNo() != null && !userDto.getMobileNo().isBlank()) {
+            existing.setMobileNo(userDto.getMobileNo());
         }
-        if (user.getCity() != null && !user.getCity().isBlank()) {
-            existing.setCity(user.getCity());
+        if (userDto.getCityId() != null) {
+            City city = cityRepo.findById(userDto.getCityId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+            existing.setCity(city);
         }
-        if (user.getEmail() != null && !user.getEmail().isBlank()) {
-            existing.setEmail(user.getEmail());
+        if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) {
+            existing.setEmail(userDto.getEmail());
         }
-        if (user.getRole() != null && !user.getRole().isBlank()) {
-            existing.setRole(user.getRole());
+        if (userDto.getRole() != null && !userDto.getRole().isBlank()) {
+            existing.setRole(userDto.getRole());
         }
-        if (user.getPassword() != null && !user.getPassword().isBlank()) {
-            existing.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
+            existing.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
 
         return userRepo.save(existing);

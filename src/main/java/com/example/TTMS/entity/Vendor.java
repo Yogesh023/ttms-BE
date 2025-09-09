@@ -19,7 +19,7 @@ public class Vendor {
     private String id;
     private String vendorId;
     private String vendorName;
-    private String city;
+    private City city;
     private List<String> locations;
     
 }

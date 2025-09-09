@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.TTMS.dto.VendorDTO;
+import com.example.TTMS.entity.City;
 import com.example.TTMS.entity.Vendor;
+import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.repository.VendorRepo;
 import com.example.TTMS.service.VendorService;
 
@@ -15,9 +17,11 @@ import com.example.TTMS.service.VendorService;
 public class VendorServiceImpl implements VendorService {
 
     private final VendorRepo vendorRepo;
+    private final CityRepo cityRepo;
 
-    public VendorServiceImpl(VendorRepo vendorRepo) {
+    public VendorServiceImpl(VendorRepo vendorRepo, CityRepo cityRepo) {
         this.vendorRepo = vendorRepo;
+        this.cityRepo = cityRepo;
     }
 
     @Override
@@ -26,7 +30,9 @@ public class VendorServiceImpl implements VendorService {
         Vendor vendor = new Vendor();
         vendor.setVendorId(vendorDto.getVendorId());
         vendor.setVendorName(vendorDto.getVendorName());
-        vendor.setCity(vendorDto.getCity());
+        City city = cityRepo.findById(vendorDto.getCity())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+        vendor.setCity(city);
         vendor.setLocations(vendorDto.getLocations());
         return vendorRepo.save(vendor);
     }
@@ -47,10 +53,11 @@ public class VendorServiceImpl implements VendorService {
     public Vendor updateVendor(String id, VendorDTO vendorDto) {
         Vendor existing = vendorRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found"));
-
+        City city = cityRepo.findById(vendorDto.getCity())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
         existing.setVendorId(vendorDto.getVendorId());
         existing.setVendorName(vendorDto.getVendorName());
-        existing.setCity(vendorDto.getCity());
+        existing.setCity(city);
         existing.setLocations(vendorDto.getLocations());
 
         return vendorRepo.save(existing);

@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.TTMS.dto.ApiResponse;
+import com.example.TTMS.dto.UserDto;
 import com.example.TTMS.entity.User;
 import com.example.TTMS.service.UserService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/user")
@@ -26,8 +29,8 @@ public class UserController {
     }
 
     @PostMapping()
-    public ApiResponse<User> addUser(@RequestBody User user) {  
-        User createdUser = userService.addUser(user);      
+    public ApiResponse<User> addUser(@Valid @RequestBody UserDto userDto) {  
+        User createdUser = userService.addUser(userDto);      
         return ApiResponse.success("User created successfully", createdUser);
     }
 
@@ -42,8 +45,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<User> updateUser(@PathVariable String id, @RequestBody User user) {
-        User updatedUser = userService.updateUser(id, user);
+    public ApiResponse<User> updateUser(@PathVariable String id, @RequestBody UserDto userDto) {
+        User updatedUser = userService.updateUser(id, userDto);
         return ApiResponse.success("User updated successfully", updatedUser);
     }
 

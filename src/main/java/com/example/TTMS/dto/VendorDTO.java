@@ -2,6 +2,8 @@ package com.example.TTMS.dto;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotBlank;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,9 +13,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VendorDTO {
 
+    @NotBlank(message = "Vendor ID is mandatory")
     private String vendorId;
+    @NotBlank(message = "Vendor Name is required")
     private String vendorName;
+    @NotBlank(message = "City is required")
     private String city;
+    @NotBlank(message = "locations is required")
     private List<String> locations;
     
 }

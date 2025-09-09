@@ -6,7 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.TTMS.dto.LocationDto;
+import com.example.TTMS.entity.City;
 import com.example.TTMS.entity.Location;
+import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.repository.LocationRepo;
 import com.example.TTMS.service.LocationService;
 
@@ -14,13 +17,21 @@ import com.example.TTMS.service.LocationService;
 public class LocationServiceImpl implements LocationService {
 
     private final LocationRepo locationRepo;
+    private final CityRepo cityRepo;
 
-    public LocationServiceImpl(LocationRepo locationRepo) {
+    public LocationServiceImpl(LocationRepo locationRepo, CityRepo cityRepo) {
         this.locationRepo = locationRepo;
+        this.cityRepo = cityRepo;
     }
 
     @Override
-    public Location addLocation(Location location) {
+    public Location addLocation(LocationDto locationDto) {
+        City city = cityRepo.findById(locationDto.getCity())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+        Location location = new Location();
+        location.setCity(city);
+        location.setLocationId(locationDto.getLocationId());
+        location.setLocationName(locationDto.getLocationName());
         return locationRepo.save(location);
     }
 
@@ -36,12 +47,14 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location updateLocation(String id, Location location) {
+    public Location updateLocation(String id, LocationDto locationDto) {
         Location existingLocation = locationRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
-        existingLocation.setCity(location.getCity());
-        existingLocation.setLocationId(location.getLocationId());
-        existingLocation.setLocationName(location.getLocationName());
+        City city = cityRepo.findById(locationDto.getCity())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+        existingLocation.setCity(city);
+        existingLocation.setLocationId(locationDto.getLocationId());
+        existingLocation.setLocationName(locationDto.getLocationName());
 
         return locationRepo.save(existingLocation);
     }

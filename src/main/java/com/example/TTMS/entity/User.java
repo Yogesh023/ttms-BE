@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ public class User {
     private String username;
     private List<String> locations;
     private String mobileNo;
-    private String city;
+    private City city;
     private String email;
     private String password;
     private String role;
