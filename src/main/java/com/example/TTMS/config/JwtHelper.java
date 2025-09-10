@@ -31,7 +31,7 @@ public class JwtHelper {
         List<String> authorities = List.of(role);
 
         JwtClaimsSet claims = JwtClaimsSet.builder().issuer("self").issuedAt(now).subject(subject)
-                .expiresAt(now.plus(1, ChronoUnit.DAYS)).claim(USER_DETAILS, claimMap)
+                .expiresAt(now.plus(10, ChronoUnit.MINUTES)).claim(USER_DETAILS, claimMap)
                 .claim("authorities", authorities)
                 .build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

@@ -9,6 +9,8 @@ import com.example.TTMS.dto.ApiResponse;
 import com.example.TTMS.entity.City;
 import com.example.TTMS.service.CityService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +29,7 @@ public class CityController {
     }
 
     @PostMapping()
-    public ApiResponse<City> addCity(@RequestBody City city) {        
+    public ApiResponse<City> addCity(@Valid @RequestBody City city) {        
         return ApiResponse.success("City created successfully", cityService.addCity(city));
     }
 
