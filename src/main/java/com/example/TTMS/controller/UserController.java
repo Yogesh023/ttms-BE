@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<User> updateUser(@PathVariable String id, @RequestBody UserDto userDto) {
+    public ApiResponse<User> updateUser(@PathVariable String id, @Valid @RequestBody UserDto userDto) {
         User updatedUser = userService.updateUser(id, userDto);
         return ApiResponse.success("User updated successfully", updatedUser);
     }

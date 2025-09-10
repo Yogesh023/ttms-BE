@@ -15,6 +15,8 @@ import com.example.TTMS.dto.ApiResponse;
 import com.example.TTMS.entity.LocationCost;
 import com.example.TTMS.service.LocationCostService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/locationcost")
 public class LocationCostController {
@@ -26,7 +28,7 @@ public class LocationCostController {
     }
 
     @PostMapping()
-    public ApiResponse<LocationCost> addLocationCost(@RequestBody LocationCost locationCost) {        
+    public ApiResponse<LocationCost> addLocationCost(@Valid @RequestBody LocationCost locationCost) {        
         return ApiResponse.success("LocationCost created successfully",locationCostService.addLocationCost(locationCost));
     }
 
@@ -41,7 +43,7 @@ public class LocationCostController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<LocationCost> updateLocationCost(@PathVariable String id, @RequestBody LocationCost locationCost) {
+    public ApiResponse<LocationCost> updateLocationCost(@PathVariable String id, @Valid @RequestBody LocationCost locationCost) {
         return ApiResponse.success("LocationCost updated successfully", locationCostService.updateLocationCost(id, locationCost));
     }
 

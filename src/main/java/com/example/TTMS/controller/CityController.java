@@ -44,7 +44,7 @@ public class CityController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<City> updateCity(@PathVariable String id, @RequestBody City city) {
+    public ApiResponse<City> updateCity(@PathVariable String id, @Valid @RequestBody City city) {
         return ApiResponse.success("City updated successfully", cityService.updateCity(id, city));
     }
 

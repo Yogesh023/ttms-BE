@@ -11,6 +11,8 @@ import com.example.TTMS.dto.VendorDTO;
 import com.example.TTMS.entity.Vendor;
 import com.example.TTMS.service.VendorService;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +30,7 @@ public class VendorController {
     }
 
     @PostMapping()
-    public ApiResponse<Vendor> addVendor(@RequestBody VendorDTO vendorDto){
+    public ApiResponse<Vendor> addVendor(@Valid @RequestBody VendorDTO vendorDto){
         return ApiResponse.success("Vendor added successfully",vendorService.addVendor(vendorDto));
     }
     
@@ -43,7 +45,7 @@ public class VendorController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Vendor> updateVendor(@PathVariable String id, @RequestBody VendorDTO vendorDto) {
+    public ApiResponse<Vendor> updateVendor(@PathVariable String id, @Valid@RequestBody VendorDTO vendorDto) {
         return ApiResponse.success("Vendor updated successfully", vendorService.updateVendor(id, vendorDto));
     }
 

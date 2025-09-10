@@ -4,6 +4,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.TTMS.service.LocationService;
+
+import jakarta.validation.Valid;
+
 import com.example.TTMS.dto.ApiResponse;
 import com.example.TTMS.dto.LocationDto;
 import com.example.TTMS.entity.Location;
@@ -29,7 +32,7 @@ public class LocationController {
     }
 
     @PostMapping()
-    public ApiResponse<Location> addLocation(@RequestBody LocationDto location) {        
+    public ApiResponse<Location> addLocation(@Valid @RequestBody LocationDto location) {        
         return ApiResponse.success("Location created successfully", locationService.addLocation(location));
     }
 
@@ -44,7 +47,7 @@ public class LocationController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Location> updateLocation(@PathVariable String id, @RequestBody LocationDto location) {
+    public ApiResponse<Location> updateLocation(@PathVariable String id, @Valid @RequestBody LocationDto location) {
         return ApiResponse.success("Location updated successfully", locationService.updateLocation(id, location));
     }
 
