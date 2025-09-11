@@ -1,6 +1,6 @@
 package com.example.TTMS.service.impl;
 
-import java.util.List;
+import java.util.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,8 +10,10 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.TTMS.dto.Login;
 import com.example.TTMS.dto.UserDto;
 import com.example.TTMS.entity.City;
+import com.example.TTMS.entity.Location;
 import com.example.TTMS.entity.User;
 import com.example.TTMS.repository.CityRepo;
+import com.example.TTMS.repository.LocationRepo;
 import com.example.TTMS.repository.UserRepo;
 import com.example.TTMS.service.UserService;
 
@@ -21,11 +23,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final CityRepo cityRepo;
+    private final LocationRepo locationRepo;
 
-    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder, CityRepo cityRepo) {
+    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder, CityRepo cityRepo, LocationRepo locationRepo) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.cityRepo = cityRepo;
+        this.locationRepo = locationRepo;
     }
 
     @Override
@@ -41,6 +45,13 @@ public class UserServiceImpl implements UserService {
         City city = cityRepo.findById(userDto.getCityId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
         user.setCity(city);
+        List<Location> locations = new ArrayList<>();
+        for (String locationId : userDto.getLocations()) {
+            Location location = locationRepo.findById(locationId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
+            locations.add(location);
+        }
+        user.setLocations(locations);
         return userRepo.save(user);
     }
 
@@ -80,7 +91,13 @@ public class UserServiceImpl implements UserService {
             existing.setUsername(userDto.getUsername());
         }
         if (userDto.getLocations() != null && !userDto.getLocations().isEmpty()) {
-            existing.setLocations(userDto.getLocations());
+            List<Location> locations = new ArrayList<>();
+            for (String locationId : userDto.getLocations()) {
+                Location location = locationRepo.findById(locationId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
+                locations.add(location);
+        }
+            existing.setLocations(locations);
         }
         if (userDto.getMobileNo() != null && !userDto.getMobileNo().isBlank()) {
             existing.setMobileNo(userDto.getMobileNo());

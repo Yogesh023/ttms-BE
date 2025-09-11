@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.TTMS.dto.ApiResponse;
+import com.example.TTMS.dto.LocationCostDto;
 import com.example.TTMS.entity.LocationCost;
 import com.example.TTMS.service.LocationCostService;
 
@@ -28,8 +29,8 @@ public class LocationCostController {
     }
 
     @PostMapping()
-    public ApiResponse<LocationCost> addLocationCost(@Valid @RequestBody LocationCost locationCost) {        
-        return ApiResponse.success("LocationCost created successfully",locationCostService.addLocationCost(locationCost));
+    public ApiResponse<LocationCost> addLocationCost(@Valid @RequestBody LocationCostDto locationCostDto) {        
+        return ApiResponse.success("LocationCost created successfully",locationCostService.addLocationCost(locationCostDto));
     }
 
     @GetMapping()
@@ -43,8 +44,8 @@ public class LocationCostController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<LocationCost> updateLocationCost(@PathVariable String id, @Valid @RequestBody LocationCost locationCost) {
-        return ApiResponse.success("LocationCost updated successfully", locationCostService.updateLocationCost(id, locationCost));
+    public ApiResponse<LocationCost> updateLocationCost(@PathVariable String id, @Valid @RequestBody LocationCostDto locationCostDto) {
+        return ApiResponse.success("LocationCost updated successfully", locationCostService.updateLocationCost(id, locationCostDto));
     }
 
     @DeleteMapping("/{id}")

@@ -20,7 +20,7 @@ public class User {
     private String id;
     private String userId;
     private String username;
-    private List<String> locations;
+    private List<Location> locations;
     private String mobileNo;
     private City city;
     private String email;
