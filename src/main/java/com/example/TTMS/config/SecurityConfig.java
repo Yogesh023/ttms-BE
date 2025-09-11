@@ -81,8 +81,8 @@ public class SecurityConfig {
                 .cors(cors -> Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/sign-in").permitAll()
-                        .anyRequest().permitAll()
-                        // .anyRequest().authenticated()
+                        // .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
                 .exceptionHandling(exception -> exception

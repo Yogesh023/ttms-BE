@@ -41,6 +41,11 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "UserId already exists");
         }
 
+        user.setUserId(userDto.getUserId());
+        user.setUsername(userDto.getUsername());
+        user.setMobileNo(userDto.getMobileNo());
+        user.setEmail(userDto.getEmail());
+        user.setRole(userDto.getRole());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         City city = cityRepo.findById(userDto.getCityId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
