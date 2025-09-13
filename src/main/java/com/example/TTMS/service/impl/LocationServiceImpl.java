@@ -1,5 +1,6 @@
 package com.example.TTMS.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -28,11 +29,23 @@ public class LocationServiceImpl implements LocationService {
     public Location addLocation(LocationDto locationDto) {
         City city = cityRepo.findById(locationDto.getCity())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+        if (city.getLocations() != null &&
+                city.getLocations().stream()
+                        .anyMatch(loc -> loc.getLocationName().equalsIgnoreCase(locationDto.getLocationName()))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Location with name '" + locationDto.getLocationName() + "' already exists in this city");
+        }
         Location location = new Location();
-        location.setCity(city);
+        // location.setCity(city);
         location.setLocationId(locationDto.getLocationId());
         location.setLocationName(locationDto.getLocationName());
-        return locationRepo.save(location);
+        location = locationRepo.save(location);
+        if (city.getLocations() == null) {
+            city.setLocations(new ArrayList<>());
+        }
+        city.getLocations().add(location);
+        cityRepo.save(city);
+        return location;
     }
 
     @Override
@@ -52,11 +65,30 @@ public class LocationServiceImpl implements LocationService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
         City city = cityRepo.findById(locationDto.getCity())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
-        existingLocation.setCity(city);
+        boolean duplicate = city.getLocations() != null &&
+                city.getLocations().stream()
+                        .filter(loc -> !loc.getId().equals(existingLocation.getId()))
+                        .anyMatch(loc -> loc.getLocationName().equalsIgnoreCase(locationDto.getLocationName()));
+
+        if (duplicate) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Location with name '" + locationDto.getLocationName() + "' already exists in this city");
+        }
+        // existingLocation.setCity(city);
         existingLocation.setLocationId(locationDto.getLocationId());
         existingLocation.setLocationName(locationDto.getLocationName());
 
-        return locationRepo.save(existingLocation);
+        Location updatedLocation = locationRepo.save(existingLocation);
+        List<Location> locations = city.getLocations();
+        if (locations == null) {
+            locations = new ArrayList<>();
+        }
+        locations.removeIf(loc -> loc.getId().equals(updatedLocation.getId()));
+        locations.add(updatedLocation);
+        city.setLocations(locations);
+        cityRepo.save(city);
+        return updatedLocation;
+
     }
 
     @Override

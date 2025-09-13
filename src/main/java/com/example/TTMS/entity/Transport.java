@@ -3,6 +3,7 @@ package com.example.TTMS.entity;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ public class Transport {
     private String type;
     private int seater;
     private Vendor vendor;
+    @DBRef
     private List<Location> locations;
 
 }

@@ -1,9 +1,11 @@
 package com.example.TTMS.entity;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,8 +18,8 @@ public class City {
 
     @Id
     private String id;
-    @NotBlank(message = "City ID is required")
     private String cityId;
-    @NotBlank(message = "City Name is required")
     private String cityName;
+    @DBRef(lazy = true)
+    private List<Location> locations;
 }

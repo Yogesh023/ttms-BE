@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.TTMS.dto.ApiResponse;
+import com.example.TTMS.dto.CityDto;
 import com.example.TTMS.entity.City;
 import com.example.TTMS.service.CityService;
 
@@ -29,8 +30,8 @@ public class CityController {
     }
 
     @PostMapping()
-    public ApiResponse<City> addCity(@Valid @RequestBody City city) {        
-        return ApiResponse.success("City created successfully", cityService.addCity(city));
+    public ApiResponse<City> addCity(@Valid @RequestBody CityDto cityDto) {        
+        return ApiResponse.success("City created successfully", cityService.addCity(cityDto));
     }
 
     @GetMapping()
@@ -44,8 +45,8 @@ public class CityController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<City> updateCity(@PathVariable String id, @Valid @RequestBody City city) {
-        return ApiResponse.success("City updated successfully", cityService.updateCity(id, city));
+    public ApiResponse<City> updateCity(@PathVariable String id, @Valid @RequestBody CityDto cityDto) {
+        return ApiResponse.success("City updated successfully", cityService.updateCity(id, cityDto));
     }
 
     @DeleteMapping("/{id}")

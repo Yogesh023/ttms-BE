@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.TTMS.dto.CityDto;
 import com.example.TTMS.entity.City;
 import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.service.CityService;
@@ -20,7 +21,11 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public City addCity(City city) {
+    public City addCity(CityDto cityDto) {
+
+        City city = new City();
+        city.setCityId(cityDto.getCityId());
+        city.setCityName(cityDto.getCityName());
         return cityRepo.save(city);
     }
 
@@ -35,13 +40,13 @@ public class CityServiceImpl implements CityService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
     }
 
-     @Override
-    public City updateCity(String id, City city) {
+    @Override
+    public City updateCity(String id, CityDto cityDto) {
         City existingCity = cityRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
 
-        existingCity.setCityId(city.getCityId());
-        existingCity.setCityName(city.getCityName());
+        existingCity.setCityId(cityDto.getCityId());
+        existingCity.setCityName(cityDto.getCityName());
 
         return cityRepo.save(existingCity);
     }

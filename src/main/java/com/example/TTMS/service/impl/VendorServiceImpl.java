@@ -1,5 +1,6 @@
 package com.example.TTMS.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -8,8 +9,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.TTMS.dto.VendorDTO;
 import com.example.TTMS.entity.City;
+import com.example.TTMS.entity.Location;
 import com.example.TTMS.entity.Vendor;
 import com.example.TTMS.repository.CityRepo;
+import com.example.TTMS.repository.LocationRepo;
 import com.example.TTMS.repository.VendorRepo;
 import com.example.TTMS.service.VendorService;
 
@@ -18,10 +21,12 @@ public class VendorServiceImpl implements VendorService {
 
     private final VendorRepo vendorRepo;
     private final CityRepo cityRepo;
+    private final LocationRepo locationRepo;
 
-    public VendorServiceImpl(VendorRepo vendorRepo, CityRepo cityRepo) {
+    public VendorServiceImpl(VendorRepo vendorRepo, CityRepo cityRepo, LocationRepo locationRepo) {
         this.vendorRepo = vendorRepo;
         this.cityRepo = cityRepo;
+        this.locationRepo = locationRepo;
     }
 
     @Override
@@ -33,7 +38,13 @@ public class VendorServiceImpl implements VendorService {
         City city = cityRepo.findById(vendorDto.getCity())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
         vendor.setCity(city);
-        vendor.setLocations(vendorDto.getLocations());
+        List<Location> locations = new ArrayList<>();
+        for (String locationId : vendorDto.getLocations()) {
+            Location location = locationRepo.findById(locationId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
+            locations.add(location);
+        }
+        vendor.setLocations(locations);
         return vendorRepo.save(vendor);
     }
 
@@ -58,7 +69,13 @@ public class VendorServiceImpl implements VendorService {
         existing.setVendorId(vendorDto.getVendorId());
         existing.setVendorName(vendorDto.getVendorName());
         existing.setCity(city);
-        existing.setLocations(vendorDto.getLocations());
+        List<Location> locations = new ArrayList<>();
+        for (String locationId : vendorDto.getLocations()) {
+            Location location = locationRepo.findById(locationId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
+            locations.add(location);
+        }
+        existing.setLocations(locations);
 
         return vendorRepo.save(existing);
     }

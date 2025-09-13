@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.TTMS.dto.LocationCostDto;
+import com.example.TTMS.entity.City;
+import com.example.TTMS.entity.Location;
 import com.example.TTMS.entity.LocationCost;
 import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.repository.LocationCostRepo;
@@ -29,13 +31,19 @@ public class LocationCostServiceImpl implements LocationCostService {
     @Override
     public LocationCost addLocationCost(LocationCostDto locationCostDto) {
 
+        Location pickupLocation = locationRepo.findById(locationCostDto.getPickupLocation())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pickup location not found"));
+
+        Location dropLocation = locationRepo.findById(locationCostDto.getDropLocation())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Drop location not found"));
+
+        City city = cityRepo.findById(locationCostDto.getCity())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+
         LocationCost locationCost = new LocationCost();
-        locationCost.setPickupLocation(locationRepo.findById(locationCostDto.getPickupLocation())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pickup location not found")));
-        locationCost.setDropLocation(locationRepo.findById(locationCostDto.getDropLocation())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Drop location not found")));
-        locationCost.setCity(cityRepo.findById(locationCostDto.getCity())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found")));
+        locationCost.setPickupLocation(pickupLocation);
+        locationCost.setDropLocation(dropLocation);
+        locationCost.setCity(city);
         locationCost.setCost(locationCostDto.getCost());
         return locationCostRepo.save(locationCost);
     }
@@ -53,15 +61,21 @@ public class LocationCostServiceImpl implements LocationCostService {
 
     @Override
     public LocationCost updateLocationCost(String id, LocationCostDto locationCostDto) {
+        
         LocationCost existing = locationCostRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location cost not found"));
+        Location pickupLocation = locationRepo.findById(locationCostDto.getPickupLocation())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pickup location not found"));
 
-        existing.setPickupLocation(locationRepo.findById(locationCostDto.getPickupLocation())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pickup location not found")));
-        existing.setDropLocation(locationRepo.findById(locationCostDto.getDropLocation())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Drop location not found")));
-        existing.setCity(cityRepo.findById(locationCostDto.getCity())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found")));
+        Location dropLocation = locationRepo.findById(locationCostDto.getDropLocation())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Drop location not found"));
+
+        City city = cityRepo.findById(locationCostDto.getCity())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+
+        existing.setPickupLocation(pickupLocation);
+        existing.setDropLocation(dropLocation);
+        existing.setCity(city);
         existing.setCost(locationCostDto.getCost());
 
         return locationCostRepo.save(existing);

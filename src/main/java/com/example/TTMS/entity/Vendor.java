@@ -3,6 +3,7 @@ package com.example.TTMS.entity;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +20,9 @@ public class Vendor {
     private String id;
     private String vendorId;
     private String vendorName;
+    @DBRef
     private City city;
-    private List<String> locations;
+    @DBRef
+    private List<Location> locations;
     
 }
