@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         user.setMobileNo(userDto.getMobileNo());
         user.setEmail(userDto.getEmail());
         user.setRole(userDto.getRole());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setPassword(passwordEncoder.encode("12345678"));
         City city = cityRepo.findById(userDto.getCityId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
         user.setCity(city);
@@ -118,9 +118,10 @@ public class UserServiceImpl implements UserService {
         if (userDto.getRole() != null && !userDto.getRole().isBlank()) {
             existing.setRole(userDto.getRole());
         }
-        if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
-            existing.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        }
+        existing.setPassword(passwordEncoder.encode("12345678"));
+
+        // if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
+        // }
 
         return userRepo.save(existing);
     }

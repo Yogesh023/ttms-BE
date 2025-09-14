@@ -24,8 +24,8 @@ public class UserDto {
     @NotBlank(message = "City ID is required")
     private String cityId;
     private String email;
-    @NotBlank(message = "Password is required")
-    private String password;
+    // @NotBlank(message = "Password is required")
+    // private String password;
     @NotBlank(message = "Role is required")
     private String role;
     

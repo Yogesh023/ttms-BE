@@ -11,7 +11,11 @@ import com.example.TTMS.dto.LocationDto;
 import com.example.TTMS.entity.City;
 import com.example.TTMS.entity.Location;
 import com.example.TTMS.repository.CityRepo;
+import com.example.TTMS.repository.LocationCostRepo;
 import com.example.TTMS.repository.LocationRepo;
+import com.example.TTMS.repository.TransportRepo;
+import com.example.TTMS.repository.UserRepo;
+import com.example.TTMS.repository.VendorRepo;
 import com.example.TTMS.service.LocationService;
 
 @Service
@@ -19,10 +23,19 @@ public class LocationServiceImpl implements LocationService {
 
     private final LocationRepo locationRepo;
     private final CityRepo cityRepo;
+    private final LocationCostRepo locationCostRepo;
+    private final TransportRepo transportRepo;
+    private final UserRepo userRepo;
+    private final VendorRepo vendorRepo;
 
-    public LocationServiceImpl(LocationRepo locationRepo, CityRepo cityRepo) {
+    public LocationServiceImpl(LocationRepo locationRepo, CityRepo cityRepo, LocationCostRepo locationCostRepo,
+            TransportRepo transportRepo, UserRepo userRepo, VendorRepo vendorRepo) {
         this.locationRepo = locationRepo;
         this.cityRepo = cityRepo;
+        this.locationCostRepo = locationCostRepo;
+        this.transportRepo = transportRepo;
+        this.userRepo = userRepo;
+        this.vendorRepo = vendorRepo;
     }
 
     @Override
@@ -93,8 +106,25 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public void deleteLocation(String id) {
-        if (!locationRepo.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found");
+        Location location = locationRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
+
+        // 🔍 Check if used in City
+        boolean usedInCity = cityRepo.existsByLocationsContains(location);
+
+        // 🔍 Check if used in LocationCost (pickup/drop)
+        boolean usedInLocationCost = locationCostRepo.existsByPickupLocation(location)
+                || locationCostRepo.existsByDropLocation(location);
+
+        boolean usedInTransport = transportRepo.existsByLocationsContains(location);
+
+        boolean usedInUser = userRepo.existsByLocationsContains(location);
+
+        boolean usedInVendor = vendorRepo.existsByLocationsContains(location);
+
+        if (usedInCity || usedInLocationCost || usedInTransport || usedInUser || usedInVendor) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Cannot delete location. It is already mapped in other entities.");
         }
         locationRepo.deleteById(id);
     }

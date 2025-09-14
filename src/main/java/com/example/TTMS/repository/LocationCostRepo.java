@@ -27,5 +27,11 @@ public interface LocationCostRepo extends MongoRepository<LocationCost, String> 
                 .and("dropLocation.id").is(dropLocation.getId()));
         return mongoTemplate.findOne(query, LocationCost.class);
     }
+
+    boolean existsByPickupLocation(Location location);
+
+    boolean existsByDropLocation(Location location);
+
+    boolean existsByCity(City city);
     
 }

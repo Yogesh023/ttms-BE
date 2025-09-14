@@ -30,4 +30,6 @@ public interface CityRepo extends MongoRepository<City, String> {
         mongoTemplate.updateFirst(query, update, City.class);
     }
 
+    boolean existsByLocationsContains(Location location);
+
 }
