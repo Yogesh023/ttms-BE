@@ -36,7 +36,7 @@ public class LocationServiceImpl implements LocationService {
                     "Location with name '" + locationDto.getLocationName() + "' already exists in this city");
         }
         Location location = new Location();
-        // location.setCity(city);
+        location.setCity(locationDto.getCity());
         location.setLocationId(locationDto.getLocationId());
         location.setLocationName(locationDto.getLocationName());
         location = locationRepo.save(location);
@@ -74,7 +74,7 @@ public class LocationServiceImpl implements LocationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Location with name '" + locationDto.getLocationName() + "' already exists in this city");
         }
-        // existingLocation.setCity(city);
+        existingLocation.setCity(locationDto.getCity());
         existingLocation.setLocationId(locationDto.getLocationId());
         existingLocation.setLocationName(locationDto.getLocationName());
 

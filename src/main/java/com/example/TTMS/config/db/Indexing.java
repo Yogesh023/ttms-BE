@@ -46,9 +46,9 @@ public class Indexing {
                                 .collation(Collation.of(Locale.US).strength(2));
                 mongoTemplate.indexOps(Location.class).createIndex(locationIdIndex);
 
-                IndexDefinition locationNameIndex = new Index("locationName", Sort.Direction.ASC).unique()
-                                .collation(Collation.of(Locale.US).strength(2));
-                mongoTemplate.indexOps(Location.class).createIndex(locationNameIndex);
+                // IndexDefinition locationNameIndex = new Index("locationName", Sort.Direction.ASC).unique()
+                //                 .collation(Collation.of(Locale.US).strength(2));
+                // mongoTemplate.indexOps(Location.class).createIndex(locationNameIndex);
 
                 IndexDefinition vendorIdIndex = new Index("vendorId", Sort.Direction.ASC).unique()
                                 .collation(Collation.of(Locale.US).strength(2));
