@@ -8,6 +8,18 @@ spring:
       uri: mongodb://localhost:27017/ttms
       database: ttms
 
+  mail:
+    host: sandbox.smtp.mailtrap.io
+    port: 2525
+    username: 52c59754d3ff6f
+    password: b9d335e7e49128
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 server:
   port: 8081
   servlet:

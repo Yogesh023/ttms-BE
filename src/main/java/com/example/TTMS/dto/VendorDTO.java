@@ -21,5 +21,11 @@ public class VendorDTO {
     private String city;
     @NotEmpty(message = "locations is required")
     private List<String> locations;
+    @NotBlank(message = "Address is required")
+    private String address;
+    @NotBlank(message = "Email is required")
+    private String email;
+    @NotBlank(message = "Mobile is required")
+    private String mobile;
     
 }

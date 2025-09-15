@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class RideTicketDto {
 
     private String city;
+    private String vendor;
     private String transport;
     private String pickupLocation;
     private String dropLocation;

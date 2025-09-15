@@ -1,5 +1,12 @@
 package com.example.TTMS.repository;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +20,32 @@ public interface VendorRepo extends MongoRepository<Vendor, String> {
     boolean existsByLocationsContains(Location location);
 
     boolean existsByCity(City city);
-    
+
+    Optional<Vendor> findByVendorId(String vendorId);
+
+    default List<Vendor> getVendorsByCityAndLocation(String cityId, List<String> locationIds,
+            MongoTemplate mongoTemplate) {
+
+        Query query = new Query();
+        query.addCriteria(
+                Criteria.where("city.$id").is(new ObjectId(cityId)) // match DBRef city
+                        .and("locations.$id").in(locationIds.stream().map(ObjectId::new).toList()) // match DBRef
+                                                                                                   // locations
+        );
+        return mongoTemplate.find(query, Vendor.class);
+    }
+
+    default Vendor validateVendorAccess(String vendorId, String cityId, String transportId, String pickupLocationId,
+            String dropLocationId, MongoTemplate mongoTemplate) {
+
+        Query query = new Query();
+
+        query.addCriteria(Criteria.where("_id").is(new ObjectId(vendorId))
+                .and("city.$id").is(new ObjectId(cityId))
+                .and("transport.$id").is(new ObjectId(transportId))
+                .and("locations.$id").all(List.of(new ObjectId(pickupLocationId), new ObjectId(dropLocationId))));
+
+        return mongoTemplate.findOne(query, Vendor.class);
+    }
+
 }

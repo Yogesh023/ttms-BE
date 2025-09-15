@@ -20,9 +20,16 @@ public class Vendor {
     private String id;
     private String vendorId;
     private String vendorName;
+    private String address;
+    private String email;
+    private String mobile;
+    private String password;
+    private String role;
     @DBRef
     private City city;
     @DBRef
     private List<Location> locations;
+    @DBRef
+    private List<Transport> transport;
     
 }

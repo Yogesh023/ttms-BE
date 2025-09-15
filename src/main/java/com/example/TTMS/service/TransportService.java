@@ -2,6 +2,7 @@ package com.example.TTMS.service;
 
 import java.util.List;
 
+import com.example.TTMS.dto.Login;
 import com.example.TTMS.dto.TransportDto;
 import com.example.TTMS.entity.Transport;
 
@@ -12,5 +13,7 @@ public interface TransportService {
     Transport addTransport(@Valid TransportDto transport);
 
     List<Transport> getAllTransports();
+
+    Transport validateLoginCredentials(Login login);
     
 }

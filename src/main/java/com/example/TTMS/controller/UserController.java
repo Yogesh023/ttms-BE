@@ -2,6 +2,7 @@ package com.example.TTMS.controller;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,8 +36,8 @@ public class UserController {
     }
 
     @GetMapping()
-    public ApiResponse<List<User>> getAllUser() {
-        return ApiResponse.success(userService.getAllUser());
+    public ApiResponse<List<User>> getAllUser(Authentication authentication) {
+        return ApiResponse.success(userService.getAllUser(authentication));
     }
 
     @GetMapping("/{id}")

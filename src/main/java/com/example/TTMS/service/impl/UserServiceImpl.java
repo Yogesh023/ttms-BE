@@ -3,10 +3,12 @@ package com.example.TTMS.service.impl;
 import java.util.*;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.TTMS.config.JwtHelper;
 import com.example.TTMS.dto.Login;
 import com.example.TTMS.dto.UserDto;
 import com.example.TTMS.entity.City;
@@ -24,12 +26,15 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final CityRepo cityRepo;
     private final LocationRepo locationRepo;
+    private final JwtHelper jwtHelper;
 
-    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder, CityRepo cityRepo, LocationRepo locationRepo) {
+    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder, CityRepo cityRepo,
+            LocationRepo locationRepo,JwtHelper jwtHelper) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.cityRepo = cityRepo;
         this.locationRepo = locationRepo;
+        this.jwtHelper = jwtHelper;
     }
 
     @Override
@@ -61,8 +66,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUser() {
-        return userRepo.findAll();
+    public List<User> getAllUser(Authentication authentication) {
+
+        Map<String, Object> userDetails = jwtHelper.getUserDetails();
+        String role = (String) userDetails.get("role");
+        return userRepo.findByRole("User");
     }
 
     @Override
@@ -73,15 +81,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User validateLoginCredentials(Login login) {
-        User user = userRepo.findByUserId(login.getUserId())
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
-
-        if (passwordEncoder.matches(login.getPassword(), user.getPassword())) {
-            return user;
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
-        }
+        return userRepo.findByUserId(login.getUserId())
+                .filter(user -> passwordEncoder.matches(login.getPassword(), user.getPassword()))
+                .orElse(null);
     }
 
     @Override
@@ -99,9 +101,9 @@ public class UserServiceImpl implements UserService {
             List<Location> locations = new ArrayList<>();
             for (String locationId : userDto.getLocations()) {
                 Location location = locationRepo.findById(locationId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
                 locations.add(location);
-        }
+            }
             existing.setLocations(locations);
         }
         if (userDto.getMobileNo() != null && !userDto.getMobileNo().isBlank()) {
@@ -109,7 +111,7 @@ public class UserServiceImpl implements UserService {
         }
         if (userDto.getCityId() != null) {
             City city = cityRepo.findById(userDto.getCityId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
             existing.setCity(city);
         }
         if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) {

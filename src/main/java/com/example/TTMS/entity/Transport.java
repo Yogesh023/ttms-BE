@@ -18,12 +18,15 @@ public class Transport {
 
     @Id
     private String id;
+    private String transportId;
     private String vehicleNo;
     private String ownerDetails;
     private String contact;
     private String type;
     private int seater;
-    private Vendor vendor;
+    private String vendorId;
+    private String password;
+    private String role;
     @DBRef
     private List<Location> locations;
 

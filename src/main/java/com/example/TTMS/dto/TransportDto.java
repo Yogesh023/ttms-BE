@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TransportDto {
 
+    @NotBlank(message = "Transport ID is required")
+    private String transportId;
     @NotBlank(message = "Vehicle Number is required")
     private String vehicleNo;
     @NotBlank(message = "Owner Details is required")

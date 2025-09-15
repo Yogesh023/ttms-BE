@@ -1,5 +1,6 @@
 package com.example.TTMS.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -15,5 +16,7 @@ public interface UserRepo extends MongoRepository<User, String> {
     boolean existsByLocationsContains(Location location);
 
     boolean existsByCity(City city);
+
+    List<User> findByRole(String role);
     
 }

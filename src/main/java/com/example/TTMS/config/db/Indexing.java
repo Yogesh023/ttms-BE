@@ -34,6 +34,14 @@ public class Indexing {
                                 .collation(Collation.of(Locale.US).strength(2));
                 mongoTemplate.indexOps(User.class).createIndex(userIndex);
 
+                IndexDefinition userEmailIndex = new Index("email", Sort.Direction.ASC).unique()
+                                .collation(Collation.of(Locale.US).strength(2));
+                mongoTemplate.indexOps(User.class).createIndex(userEmailIndex);
+
+                IndexDefinition userMobileIndex = new Index("mobileNo", Sort.Direction.ASC).unique()
+                                .collation(Collation.of(Locale.US).strength(2));
+                mongoTemplate.indexOps(User.class).createIndex(userMobileIndex);
+
                 IndexDefinition cityIdIndex = new Index("cityId", Sort.Direction.ASC).unique()
                                 .collation(Collation.of(Locale.US).strength(2));
                 mongoTemplate.indexOps(City.class).createIndex(cityIdIndex);
@@ -46,13 +54,21 @@ public class Indexing {
                                 .collation(Collation.of(Locale.US).strength(2));
                 mongoTemplate.indexOps(Location.class).createIndex(locationIdIndex);
 
-                // IndexDefinition locationNameIndex = new Index("locationName", Sort.Direction.ASC).unique()
-                //                 .collation(Collation.of(Locale.US).strength(2));
-                // mongoTemplate.indexOps(Location.class).createIndex(locationNameIndex);
-
                 IndexDefinition vendorIdIndex = new Index("vendorId", Sort.Direction.ASC).unique()
                                 .collation(Collation.of(Locale.US).strength(2));
                 mongoTemplate.indexOps(Vendor.class).createIndex(vendorIdIndex);
+
+                IndexDefinition vendorAddressIndex = new Index("address", Sort.Direction.ASC).unique()
+                                .collation(Collation.of(Locale.US).strength(2));
+                mongoTemplate.indexOps(Vendor.class).createIndex(vendorAddressIndex);
+
+                IndexDefinition vendorEmailIndex = new Index("email", Sort.Direction.ASC).unique()
+                                .collation(Collation.of(Locale.US).strength(2));
+                mongoTemplate.indexOps(Vendor.class).createIndex(vendorEmailIndex);
+
+                IndexDefinition vendorMobileIndex = new Index("mobile", Sort.Direction.ASC).unique()
+                                .collation(Collation.of(Locale.US).strength(2));
+                mongoTemplate.indexOps(Vendor.class).createIndex(vendorMobileIndex);
 
                 IndexDefinition vehicleIndex = new Index("vehicleNo", Sort.Direction.ASC).unique()
                                 .collation(Collation.of(Locale.US).strength(2));

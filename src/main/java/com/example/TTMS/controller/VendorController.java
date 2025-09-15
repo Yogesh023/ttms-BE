@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.TTMS.dto.ApiResponse;
@@ -53,6 +54,11 @@ public class VendorController {
     public ApiResponse<Void> deleteVendor(@PathVariable String id) {
         vendorService.deleteVendor(id);
         return ApiResponse.success("Vendor deleted successfully", null);
+    }
+
+    @GetMapping("/city/location")
+    public ApiResponse<List<Vendor>> getVendorsByCityAndLocation(@RequestParam String cityId, @RequestParam List<String> locationIds) {
+        return ApiResponse.success(vendorService.getVendorsByCityAndLocation(cityId, locationIds));
     }
     
 }
