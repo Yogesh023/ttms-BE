@@ -79,7 +79,9 @@ public class AuthenticationController {
             }
         }
         if (account == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
         JwtResponse jwtResponse = jwtHelper.createJwtForClaims(login.getUserId(), details);
         Map<String, Object> response = new HashMap<>();
