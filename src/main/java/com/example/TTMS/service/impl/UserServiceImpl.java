@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
 
         user.setUserId(userDto.getUserId());
         user.setUsername(userDto.getUsername());
+        user.setAddress(userDto.getAddress());
         user.setMobileNo(userDto.getMobileNo());
         user.setEmail(userDto.getEmail());
         user.setRole(userDto.getRole());
@@ -96,6 +97,9 @@ public class UserServiceImpl implements UserService {
         }
         if (userDto.getUsername() != null && !userDto.getUsername().isBlank()) {
             existing.setUsername(userDto.getUsername());
+        }
+        if(userDto.getAddress() != null && !userDto.getAddress().isBlank()) {
+            existing.setAddress(userDto.getAddress());
         }
         if (userDto.getLocations() != null && !userDto.getLocations().isEmpty()) {
             List<Location> locations = new ArrayList<>();

@@ -17,6 +17,8 @@ public class UserDto {
     private String userId;
     @NotBlank(message = "Username is required")
     private String username;
+    @NotBlank(message = "Address is required")
+    private String address;
     @NotEmpty(message = "Locations is required")
     private List<String> locations;
     @NotBlank(message = "Mobile No is required")

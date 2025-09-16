@@ -21,6 +21,7 @@ public class User {
     private String id;
     private String userId;
     private String username;
+    private String address;
     @DBRef(lazy = true)
     private List<Location> locations;
     private String mobileNo;
