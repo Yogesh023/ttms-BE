@@ -76,10 +76,10 @@ public class LocationServiceImpl implements LocationService {
     public Location updateLocation(String id, LocationDto locationDto) {
         Location existingLocation = locationRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
-        City city = cityRepo.findById(locationDto.getCity())
+        City newCity = cityRepo.findById(locationDto.getCity())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
-        boolean duplicate = city.getLocations() != null &&
-                city.getLocations().stream()
+        boolean duplicate = newCity.getLocations() != null &&
+                newCity.getLocations().stream()
                         .filter(loc -> !loc.getId().equals(existingLocation.getId()))
                         .anyMatch(loc -> loc.getLocationName().equalsIgnoreCase(locationDto.getLocationName()));
 
@@ -87,19 +87,27 @@ public class LocationServiceImpl implements LocationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Location with name '" + locationDto.getLocationName() + "' already exists in this city");
         }
+        if (!existingLocation.getCity().equals(newCity.getId())) {
+            City oldCity = cityRepo.findById(existingLocation.getCity())
+                    .orElse(null);
+            if (oldCity != null && oldCity.getLocations() != null) {
+                oldCity.getLocations().removeIf(loc -> loc.getId().equals(existingLocation.getId()));
+                cityRepo.save(oldCity);
+            }
+        }
         existingLocation.setCity(locationDto.getCity());
         existingLocation.setLocationId(locationDto.getLocationId());
         existingLocation.setLocationName(locationDto.getLocationName());
 
         Location updatedLocation = locationRepo.save(existingLocation);
-        List<Location> locations = city.getLocations();
+        List<Location> locations = newCity.getLocations();
         if (locations == null) {
             locations = new ArrayList<>();
         }
         locations.removeIf(loc -> loc.getId().equals(updatedLocation.getId()));
         locations.add(updatedLocation);
-        city.setLocations(locations);
-        cityRepo.save(city);
+        newCity.setLocations(locations);
+        cityRepo.save(newCity);
         return updatedLocation;
 
     }
