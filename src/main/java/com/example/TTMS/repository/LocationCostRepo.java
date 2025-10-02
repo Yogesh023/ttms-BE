@@ -1,5 +1,7 @@
 package com.example.TTMS.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -28,10 +30,12 @@ public interface LocationCostRepo extends MongoRepository<LocationCost, String> 
         return mongoTemplate.findOne(query, LocationCost.class);
     }
 
-    boolean existsByPickupLocation(Location location);
+    boolean existsByLocationCostDetailsPickupLocation(Location location);
 
-    boolean existsByDropLocation(Location location);
+    boolean existsByLocationCostDetailsDropLocation(Location location);
 
     boolean existsByCity(City city);
+
+    Optional<LocationCost> findByCity(City city);
     
 }

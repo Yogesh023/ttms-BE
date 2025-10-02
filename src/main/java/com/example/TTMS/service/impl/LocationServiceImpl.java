@@ -121,8 +121,8 @@ public class LocationServiceImpl implements LocationService {
         boolean usedInCity = cityRepo.existsByLocationsContains(location);
 
         // 🔍 Check if used in LocationCost (pickup/drop)
-        boolean usedInLocationCost = locationCostRepo.existsByPickupLocation(location)
-                || locationCostRepo.existsByDropLocation(location);
+        boolean usedInLocationCost = locationCostRepo.existsByLocationCostDetailsPickupLocation(location)
+                || locationCostRepo.existsByLocationCostDetailsDropLocation(location);
 
         boolean usedInTransport = transportRepo.existsByLocationsContains(location);
 

@@ -1,7 +1,10 @@
 package com.example.TTMS.dto;
 
+import java.util.List;
+
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,10 +16,6 @@ public class LocationCostDto {
     
     @NotBlank(message = "City is required")
     private String city;
-    @NotBlank(message = "Pickup Location is required")
-    private String pickupLocation;
-    @NotBlank(message = "Drop Location is required")
-    private String dropLocation;
-    @NotNull(message = "Cost is required")
-    private double cost;
+    @NotEmpty
+    private List<@Valid LocationCostDetailsDto> locationCostDetails;
 }
