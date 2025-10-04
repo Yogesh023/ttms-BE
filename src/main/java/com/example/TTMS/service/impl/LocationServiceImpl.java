@@ -126,11 +126,7 @@ public class LocationServiceImpl implements LocationService {
 
         boolean usedInTransport = transportRepo.existsByLocationsContains(location);
 
-        boolean usedInUser = userRepo.existsByLocationsContains(location);
-
-        boolean usedInVendor = vendorRepo.existsByLocationsContains(location);
-
-        if (usedInCity || usedInLocationCost || usedInTransport || usedInUser || usedInVendor) {
+        if (usedInCity || usedInLocationCost || usedInTransport) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Cannot delete location. It is already mapped in other entities.");
         }

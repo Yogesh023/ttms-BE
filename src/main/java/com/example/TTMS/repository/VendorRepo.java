@@ -17,8 +17,6 @@ import com.example.TTMS.entity.Vendor;
 @Repository
 public interface VendorRepo extends MongoRepository<Vendor, String> {
 
-    boolean existsByLocationsContains(Location location);
-
     boolean existsByCity(City city);
 
     Optional<Vendor> findByVendorId(String vendorId);

@@ -11,7 +11,6 @@ import com.example.TTMS.entity.City;
 import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.repository.LocationCostRepo;
 import com.example.TTMS.repository.LocationRepo;
-import com.example.TTMS.repository.UserRepo;
 import com.example.TTMS.repository.VendorRepo;
 import com.example.TTMS.service.CityService;
 
@@ -21,15 +20,13 @@ public class CityServiceImpl implements CityService {
     private final CityRepo cityRepo;
     private final LocationRepo locationRepo;
     private final LocationCostRepo locationCostRepo;
-    private final UserRepo userRepo;
     private final VendorRepo vendorRepo;
 
     public CityServiceImpl(CityRepo cityRepo, LocationRepo locationRepo, LocationCostRepo locationCostRepo,
-            UserRepo userRepo, VendorRepo vendorRepo) {
+            VendorRepo vendorRepo) {
         this.cityRepo = cityRepo;
         this.locationRepo = locationRepo;
         this.locationCostRepo = locationCostRepo;
-        this.userRepo = userRepo;
         this.vendorRepo = vendorRepo;
     }
 
@@ -70,11 +67,10 @@ public class CityServiceImpl implements CityService {
         City city = cityRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
 
-        boolean usedInUser = userRepo.existsByCity(city);
         boolean usedInVendor = vendorRepo.existsByCity(city);
         boolean usedInLocation = locationRepo.existsByCity(city.getId());
         boolean usedInLocationCost = locationCostRepo.existsByCity(city);
-        if (usedInUser || usedInVendor || usedInLocation || usedInLocationCost) {
+        if (usedInVendor || usedInLocation || usedInLocationCost) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Cannot delete city. It is already mapped in other entities.");
         }
