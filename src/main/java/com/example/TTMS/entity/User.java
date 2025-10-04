@@ -22,11 +22,14 @@ public class User {
     private String userId;
     private String username;
     private String address;
-    @DBRef(lazy = true)
-    private List<Location> locations;
+    // @DBRef(lazy = true)
+    // private List<Location> locations;
     private String mobileNo;
-    @DBRef
-    private City city;
+    private Location pickupLocation;
+    private Transport transport;
+    private int noOfPerson;
+    // @DBRef
+    // private City city;
     private String email;
     private String password;
     private String role;

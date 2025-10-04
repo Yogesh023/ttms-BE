@@ -23,8 +23,12 @@ public class UserDto {
     private List<String> locations;
     @NotBlank(message = "Mobile No is required")
     private String mobileNo;
-    @NotBlank(message = "City ID is required")
-    private String cityId;
+    @NotBlank(message = "Pickup Location is required")
+    private String pickupLocation;
+    @NotBlank(message = "Transport is required")
+    private String transport;
+    @NotBlank(message = "No of Person is required")
+    private int noOfPerson;
     private String email;
     // @NotBlank(message = "Password is required")
     // private String password;

@@ -1,9 +1,12 @@
 package com.example.TTMS.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -127,7 +130,8 @@ public class LocationCostServiceImpl implements LocationCostService {
                                                         && d.getDropLocation().getId().equals(dropLocation.getId()))
                                         .findFirst()
                                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                        "No location cost found for pickup " + pickupLocation.getLocationName()
+                                                        "No location cost found for pickup "
+                                                                        + pickupLocation.getLocationName()
                                                                         + " and drop " + dropLocation.getLocationName()
                                                                         + " in this city"));
 
@@ -144,6 +148,27 @@ public class LocationCostServiceImpl implements LocationCostService {
                         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Location cost not found");
                 }
                 locationCostRepo.deleteById(id);
+        }
+
+        @Override
+        public LocationCost getLocationCostByCityId(String cityId) {
+
+                Query query = new Query();
+                query.addCriteria(Criteria.where("city.id").is(cityId));
+
+                LocationCost locationCost = mongoTemplate.findOne(query, LocationCost.class);
+
+                if (locationCost == null) {
+                        LocationCost emptyCost = new LocationCost();
+                        emptyCost.setLocationCostDetails(Collections.emptyList());
+                        return emptyCost;
+                }
+
+                if (locationCost.getLocationCostDetails() == null) {
+                        locationCost.setLocationCostDetails(Collections.emptyList());
+                }
+
+                return locationCost;
         }
 
 }

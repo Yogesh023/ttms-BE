@@ -27,8 +27,8 @@ public class Vendor {
     private String role;
     @DBRef
     private City city;
-    @DBRef
-    private List<Location> locations;
+    // @DBRef
+    // private List<Location> locations;
     @DBRef
     private List<Transport> transport;
     

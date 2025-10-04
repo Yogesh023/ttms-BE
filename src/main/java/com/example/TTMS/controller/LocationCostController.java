@@ -53,5 +53,10 @@ public class LocationCostController {
         locationCostService.deleteLocationCost(id);
         return ApiResponse.success("LocationCost deleted successfully", null);
     }
+
+    @GetMapping("/{cityId}")
+    public ApiResponse<LocationCost> getLocationCostByCityId(@PathVariable String cityId){
+        return ApiResponse.success(locationCostService.getLocationCostByCityId(cityId));
+    }
     
 }

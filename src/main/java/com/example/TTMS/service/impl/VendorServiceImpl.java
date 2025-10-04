@@ -1,6 +1,5 @@
 package com.example.TTMS.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -12,10 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.TTMS.dto.Login;
 import com.example.TTMS.dto.VendorDTO;
 import com.example.TTMS.entity.City;
-import com.example.TTMS.entity.Location;
 import com.example.TTMS.entity.Vendor;
 import com.example.TTMS.repository.CityRepo;
-import com.example.TTMS.repository.LocationRepo;
 import com.example.TTMS.repository.VendorRepo;
 import com.example.TTMS.service.VendorService;
 
@@ -24,14 +21,12 @@ public class VendorServiceImpl implements VendorService {
 
     private final VendorRepo vendorRepo;
     private final CityRepo cityRepo;
-    private final LocationRepo locationRepo;
     private final PasswordEncoder passwordEncoder;
     private final MongoTemplate mongoTemplate;
 
-    public VendorServiceImpl(VendorRepo vendorRepo, CityRepo cityRepo, LocationRepo locationRepo, PasswordEncoder passwordEncoder, MongoTemplate mongoTemplate) {
+    public VendorServiceImpl(VendorRepo vendorRepo, CityRepo cityRepo, PasswordEncoder passwordEncoder, MongoTemplate mongoTemplate) {
         this.vendorRepo = vendorRepo;
         this.cityRepo = cityRepo;
-        this.locationRepo = locationRepo;
         this.passwordEncoder = passwordEncoder;
         this.mongoTemplate = mongoTemplate;
     }
@@ -50,13 +45,6 @@ public class VendorServiceImpl implements VendorService {
         City city = cityRepo.findById(vendorDto.getCity())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
         vendor.setCity(city);
-        List<Location> locations = new ArrayList<>();
-        for (String locationId : vendorDto.getLocations()) {
-            Location location = locationRepo.findById(locationId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
-            locations.add(location);
-        }
-        vendor.setLocations(locations);
         return vendorRepo.save(vendor);
     }
 
@@ -86,13 +74,6 @@ public class VendorServiceImpl implements VendorService {
         existing.setPassword(existing.getPassword());
         existing.setRole("Vendor");
         existing.setCity(city);
-        List<Location> locations = new ArrayList<>();
-        for (String locationId : vendorDto.getLocations()) {
-            Location location = locationRepo.findById(locationId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
-            locations.add(location);
-        }
-        existing.setLocations(locations);
 
         return vendorRepo.save(existing);
     }

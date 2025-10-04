@@ -11,11 +11,11 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.TTMS.config.JwtHelper;
 import com.example.TTMS.dto.Login;
 import com.example.TTMS.dto.UserDto;
-import com.example.TTMS.entity.City;
 import com.example.TTMS.entity.Location;
+import com.example.TTMS.entity.Transport;
 import com.example.TTMS.entity.User;
-import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.repository.LocationRepo;
+import com.example.TTMS.repository.TransportRepo;
 import com.example.TTMS.repository.UserRepo;
 import com.example.TTMS.service.UserService;
 
@@ -24,17 +24,17 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
-    private final CityRepo cityRepo;
     private final LocationRepo locationRepo;
     private final JwtHelper jwtHelper;
+    private final TransportRepo transportRepo;
 
-    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder, CityRepo cityRepo,
-            LocationRepo locationRepo,JwtHelper jwtHelper) {
+    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder,
+            LocationRepo locationRepo, JwtHelper jwtHelper, TransportRepo transportRepo) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
-        this.cityRepo = cityRepo;
         this.locationRepo = locationRepo;
         this.jwtHelper = jwtHelper;
+        this.transportRepo = transportRepo;
     }
 
     @Override
@@ -53,16 +53,14 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setRole(userDto.getRole());
         user.setPassword(passwordEncoder.encode("12345678"));
-        City city = cityRepo.findById(userDto.getCityId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
-        user.setCity(city);
-        List<Location> locations = new ArrayList<>();
-        for (String locationId : userDto.getLocations()) {
-            Location location = locationRepo.findById(locationId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
-            locations.add(location);
-        }
-        user.setLocations(locations);
+        Location location = locationRepo.findById(userDto.getPickupLocation())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
+        user.setPickupLocation(location);
+        Transport transport = transportRepo.findById(userDto.getTransport())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transport not found"));
+        user.setNoOfPerson(userDto.getNoOfPerson());
+        user.setTransport(transport);
+        user.setNoOfPerson(userDto.getNoOfPerson());
         return userRepo.save(user);
     }
 
@@ -98,25 +96,24 @@ public class UserServiceImpl implements UserService {
         if (userDto.getUsername() != null && !userDto.getUsername().isBlank()) {
             existing.setUsername(userDto.getUsername());
         }
-        if(userDto.getAddress() != null && !userDto.getAddress().isBlank()) {
+        if (userDto.getAddress() != null && !userDto.getAddress().isBlank()) {
             existing.setAddress(userDto.getAddress());
         }
-        if (userDto.getLocations() != null && !userDto.getLocations().isEmpty()) {
-            List<Location> locations = new ArrayList<>();
-            for (String locationId : userDto.getLocations()) {
-                Location location = locationRepo.findById(locationId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
-                locations.add(location);
-            }
-            existing.setLocations(locations);
+        if (userDto.getPickupLocation() != null && !userDto.getPickupLocation().isEmpty()) {
+            Location location = locationRepo.findById(userDto.getPickupLocation())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
+            existing.setPickupLocation(location);
         }
         if (userDto.getMobileNo() != null && !userDto.getMobileNo().isBlank()) {
             existing.setMobileNo(userDto.getMobileNo());
         }
-        if (userDto.getCityId() != null) {
-            City city = cityRepo.findById(userDto.getCityId())
+        if (userDto.getTransport() != null) {
+            Transport transport = transportRepo.findById(userDto.getTransport())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
-            existing.setCity(city);
+            existing.setTransport(transport);
+        }
+        if (userDto.getNoOfPerson() != 0) {
+            existing.setNoOfPerson(userDto.getNoOfPerson());
         }
         if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) {
             existing.setEmail(userDto.getEmail());

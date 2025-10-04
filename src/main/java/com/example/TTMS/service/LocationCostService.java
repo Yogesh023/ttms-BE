@@ -17,4 +17,6 @@ public interface LocationCostService {
 
     void deleteLocationCost(String id);
 
+    LocationCost getLocationCostByCityId(String cityId);
+
 }
