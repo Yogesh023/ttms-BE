@@ -22,7 +22,6 @@ import com.example.TTMS.entity.Status;
 import com.example.TTMS.entity.Transport;
 import com.example.TTMS.entity.TransportStatus;
 import com.example.TTMS.entity.User;
-import com.example.TTMS.entity.Vendor;
 import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.repository.LocationCostRepo;
 import com.example.TTMS.repository.LocationRepo;
@@ -40,11 +39,10 @@ public class RideTicketServiceImpl implements RideTicketService {
     private final LocationRepo locationRepo;
     private final LocationCostRepo locationCostRepo;
     private final MongoTemplate mongoTemplate;
-    private final VendorRepo vendorRepo;
     private final JwtHelper jwtHelper;
 
     public RideTicketServiceImpl(RideTicketRepo rideTicketRepo, TransportRepo transportRepo, CityRepo cityRepo,
-            LocationRepo locationRepo, LocationCostRepo locationCostRepo, MongoTemplate mongoTemplate, VendorRepo vendorRepo,
+            LocationRepo locationRepo, LocationCostRepo locationCostRepo, MongoTemplate mongoTemplate
             JwtHelper jwtHelper) {
         this.rideTicketRepo = rideTicketRepo;
         this.transportRepo = transportRepo;
@@ -52,7 +50,6 @@ public class RideTicketServiceImpl implements RideTicketService {
         this.locationRepo = locationRepo;
         this.locationCostRepo = locationCostRepo;
         this.mongoTemplate = mongoTemplate;
-        this.vendorRepo = vendorRepo;
         this.jwtHelper = jwtHelper;
     }
 

@@ -1,9 +1,6 @@
 package com.example.TTMS.dto;
 
-import java.util.List;
-
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +25,7 @@ public class TransportDto {
     private int seater;
     @NotBlank(message = "Vendor is required")
     private String vendor;
-    @NotEmpty(message = "At least one location is required")
-    private List<String> locations;
+    @NotBlank(message = "City is required")
+    private String City;
     
 }

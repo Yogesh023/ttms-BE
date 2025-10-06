@@ -11,11 +11,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.TTMS.dto.Login;
 import com.example.TTMS.dto.TransportDto;
-import com.example.TTMS.entity.Location;
+import com.example.TTMS.entity.City;
 import com.example.TTMS.entity.Transport;
 import com.example.TTMS.entity.TransportStatus;
 import com.example.TTMS.entity.Vendor;
-import com.example.TTMS.repository.LocationRepo;
+import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.repository.TransportRepo;
 import com.example.TTMS.repository.VendorRepo;
 import com.example.TTMS.service.TransportService;
@@ -27,15 +27,15 @@ public class TransportServiceImpl implements TransportService {
 
     private final TransportRepo transportRepo;
     private final VendorRepo vendorRepo;
-    private final LocationRepo locationRepo;
+    private final CityRepo cityRepo;
     private final PasswordEncoder passwordEncoder;
     private final MongoTemplate mongoTemplate;
 
-    public TransportServiceImpl(TransportRepo transportRepo, VendorRepo vendorRepo, LocationRepo locationRepo,
+    public TransportServiceImpl(TransportRepo transportRepo, VendorRepo vendorRepo, CityRepo cityRepo,
             PasswordEncoder passwordEncoder, MongoTemplate mongoTemplate) {
         this.transportRepo = transportRepo;
         this.vendorRepo = vendorRepo;
-        this.locationRepo = locationRepo;
+        this.cityRepo = cityRepo;
         this.passwordEncoder = passwordEncoder;
         this.mongoTemplate = mongoTemplate;
     }
@@ -55,13 +55,9 @@ public class TransportServiceImpl implements TransportService {
         transport.setVendorId(transportDto.getVendor());
         transport.setPassword(passwordEncoder.encode("12345678"));
         transport.setRole("Transport");
-        List<Location> locations = new ArrayList<>();
-        for (String locationId : transportDto.getLocations()) {
-            Location location = locationRepo.findById(locationId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
-            locations.add(location);
-        }
-        transport.setLocations(locations);
+        City city = cityRepo.findById(transportDto.getCity())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+        transport.setCity(city);
         transport.setStatus(TransportStatus.AVAILABLE.getLabel());
         transport = transportRepo.save(transport);
         if (vendor.getTransport() == null) {
@@ -97,13 +93,9 @@ public class TransportServiceImpl implements TransportService {
         existingTransport.setType(transportDto.getType());
         existingTransport.setSeater(transportDto.getSeater());
         existingTransport.setVendorId(transportDto.getVendor());
-        List<Location> locations = new ArrayList<>();
-        for (String locationId : transportDto.getLocations()) {
-            Location location = locationRepo.findById(locationId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
-            locations.add(location);
-        }
-        existingTransport.setLocations(locations);
+        City city = cityRepo.findById(transportDto.getCity())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+        existingTransport.setCity(city);
         return transportRepo.save(existingTransport);
     }
 

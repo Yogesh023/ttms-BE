@@ -14,8 +14,6 @@ import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.repository.LocationCostRepo;
 import com.example.TTMS.repository.LocationRepo;
 import com.example.TTMS.repository.TransportRepo;
-import com.example.TTMS.repository.UserRepo;
-import com.example.TTMS.repository.VendorRepo;
 import com.example.TTMS.service.LocationService;
 
 @Service
@@ -25,17 +23,13 @@ public class LocationServiceImpl implements LocationService {
     private final CityRepo cityRepo;
     private final LocationCostRepo locationCostRepo;
     private final TransportRepo transportRepo;
-    private final UserRepo userRepo;
-    private final VendorRepo vendorRepo;
 
     public LocationServiceImpl(LocationRepo locationRepo, CityRepo cityRepo, LocationCostRepo locationCostRepo,
-            TransportRepo transportRepo, UserRepo userRepo, VendorRepo vendorRepo) {
+            TransportRepo transportRepo) {
         this.locationRepo = locationRepo;
         this.cityRepo = cityRepo;
         this.locationCostRepo = locationCostRepo;
         this.transportRepo = transportRepo;
-        this.userRepo = userRepo;
-        this.vendorRepo = vendorRepo;
     }
 
     @Override

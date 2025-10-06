@@ -1,7 +1,5 @@
 package com.example.TTMS.entity;
 
-import java.util.List;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -28,7 +26,7 @@ public class Transport {
     private String password;
     private String role;
     @DBRef
-    private List<Location> locations;
+    private City city;
     private String status;
 
 }
