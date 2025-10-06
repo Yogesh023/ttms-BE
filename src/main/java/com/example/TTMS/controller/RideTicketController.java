@@ -36,5 +36,4 @@ public class RideTicketController {
             Authentication authentication) {
         return ApiResponse.success(rideTicketService.getMyTickets(search, authentication));
     }
-
 }

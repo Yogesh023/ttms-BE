@@ -29,5 +29,6 @@ public class Transport {
     private String role;
     @DBRef
     private List<Location> locations;
+    private String status;
 
 }

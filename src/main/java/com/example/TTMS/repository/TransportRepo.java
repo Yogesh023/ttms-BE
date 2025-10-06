@@ -1,7 +1,13 @@
 package com.example.TTMS.repository;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.example.TTMS.entity.Location;
@@ -13,4 +19,18 @@ public interface TransportRepo extends MongoRepository<Transport, String> {
 
     Optional<Transport> findByTransportId(String transportId);
 
+    default List<Transport> findByLocations(String location, MongoTemplate mongoTemplate){
+
+        Query query = new Query();
+        query.addCriteria(Criteria.where("locations.$id").is(new ObjectId(location)));
+        return mongoTemplate.find(query, Transport.class);
+    }
+
+    default void updateTransportStatus(String transport, String status, MongoTemplate mongoTemplate){
+
+        Query query = new Query(Criteria.where("id").is(transport));
+        Update update = new Update();
+        update.set("status", status);
+        mongoTemplate.updateFirst(query, update, Transport.class);
+    }
 }

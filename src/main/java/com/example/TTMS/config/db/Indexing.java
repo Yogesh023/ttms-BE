@@ -74,5 +74,9 @@ public class Indexing {
                                 .collation(Collation.of(Locale.US).strength(2));
                 mongoTemplate.indexOps(Transport.class).createIndex(vehicleIndex);
 
+                IndexDefinition transportIdIndex = new Index("transportId", Sort.Direction.ASC).unique()
+                                .collation(Collation.of(Locale.US).strength(2));
+                mongoTemplate.indexOps(Transport.class).createIndex(transportIdIndex);
+
         }
 }

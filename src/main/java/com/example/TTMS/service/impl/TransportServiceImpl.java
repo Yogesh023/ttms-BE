@@ -3,6 +3,7 @@ package com.example.TTMS.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import com.example.TTMS.dto.Login;
 import com.example.TTMS.dto.TransportDto;
 import com.example.TTMS.entity.Location;
 import com.example.TTMS.entity.Transport;
+import com.example.TTMS.entity.TransportStatus;
 import com.example.TTMS.entity.Vendor;
 import com.example.TTMS.repository.LocationRepo;
 import com.example.TTMS.repository.TransportRepo;
@@ -27,13 +29,15 @@ public class TransportServiceImpl implements TransportService {
     private final VendorRepo vendorRepo;
     private final LocationRepo locationRepo;
     private final PasswordEncoder passwordEncoder;
+    private final MongoTemplate mongoTemplate;
 
-
-    public TransportServiceImpl(TransportRepo transportRepo, VendorRepo vendorRepo, LocationRepo locationRepo, PasswordEncoder passwordEncoder) {
+    public TransportServiceImpl(TransportRepo transportRepo, VendorRepo vendorRepo, LocationRepo locationRepo,
+            PasswordEncoder passwordEncoder, MongoTemplate mongoTemplate) {
         this.transportRepo = transportRepo;
         this.vendorRepo = vendorRepo;
         this.locationRepo = locationRepo;
         this.passwordEncoder = passwordEncoder;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
@@ -58,6 +62,7 @@ public class TransportServiceImpl implements TransportService {
             locations.add(location);
         }
         transport.setLocations(locations);
+        transport.setStatus(TransportStatus.AVAILABLE.getLabel());
         transport = transportRepo.save(transport);
         if (vendor.getTransport() == null) {
             vendor.setTransport(new ArrayList<>());
@@ -77,6 +82,42 @@ public class TransportServiceImpl implements TransportService {
         return transportRepo.findByTransportId(login.getUserId())
                 .filter(transport -> passwordEncoder.matches(login.getPassword(), transport.getPassword()))
                 .orElse(null);
+    }
+
+    @Override
+    public Transport updateTransport(String id, @Valid TransportDto transportDto) {
+
+        Transport existingTransport = transportRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transport not found"));
+
+        existingTransport.setTransportId(transportDto.getTransportId());
+        existingTransport.setVehicleNo(transportDto.getVehicleNo());
+        existingTransport.setOwnerDetails(transportDto.getOwnerDetails());
+        existingTransport.setContact(transportDto.getContact());
+        existingTransport.setType(transportDto.getType());
+        existingTransport.setSeater(transportDto.getSeater());
+        existingTransport.setVendorId(transportDto.getVendor());
+        List<Location> locations = new ArrayList<>();
+        for (String locationId : transportDto.getLocations()) {
+            Location location = locationRepo.findById(locationId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
+            locations.add(location);
+        }
+        existingTransport.setLocations(locations);
+        return transportRepo.save(existingTransport);
+    }
+
+    @Override
+    public void deleteTransport(String id) {
+
+        Transport transport = transportRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transport not found"));
+        transportRepo.delete(transport);
+    }
+
+    @Override
+    public List<Transport> getTransportByLocation(String location) {
+        return transportRepo.findByLocations(location, mongoTemplate);
     }
 
 }

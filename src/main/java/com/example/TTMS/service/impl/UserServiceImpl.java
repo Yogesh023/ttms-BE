@@ -11,12 +11,15 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.TTMS.config.JwtHelper;
 import com.example.TTMS.dto.Login;
 import com.example.TTMS.dto.UserDto;
+import com.example.TTMS.entity.City;
 import com.example.TTMS.entity.Location;
 import com.example.TTMS.entity.Transport;
 import com.example.TTMS.entity.User;
+import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.repository.LocationRepo;
 import com.example.TTMS.repository.TransportRepo;
 import com.example.TTMS.repository.UserRepo;
+import com.example.TTMS.service.RideTicketService;
 import com.example.TTMS.service.UserService;
 
 @Service
@@ -27,14 +30,19 @@ public class UserServiceImpl implements UserService {
     private final LocationRepo locationRepo;
     private final JwtHelper jwtHelper;
     private final TransportRepo transportRepo;
+    private final CityRepo cityRepo;
+    private final RideTicketService rideTicketService;
 
     public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder,
-            LocationRepo locationRepo, JwtHelper jwtHelper, TransportRepo transportRepo) {
+            LocationRepo locationRepo, JwtHelper jwtHelper, TransportRepo transportRepo, CityRepo cityRepo,
+            RideTicketService rideTicketService) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.locationRepo = locationRepo;
         this.jwtHelper = jwtHelper;
         this.transportRepo = transportRepo;
+        this.cityRepo = cityRepo;
+        this.rideTicketService = rideTicketService;
     }
 
     @Override
@@ -52,6 +60,9 @@ public class UserServiceImpl implements UserService {
         user.setMobileNo(userDto.getMobileNo());
         user.setEmail(userDto.getEmail());
         user.setRole(userDto.getRole());
+        City city = cityRepo.findById(userDto.getCityId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+        user.setCity(city);
         user.setPassword(passwordEncoder.encode("12345678"));
         Location location = locationRepo.findById(userDto.getPickupLocation())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
@@ -61,7 +72,9 @@ public class UserServiceImpl implements UserService {
         user.setNoOfPerson(userDto.getNoOfPerson());
         user.setTransport(transport);
         user.setNoOfPerson(userDto.getNoOfPerson());
-        return userRepo.save(user);
+        user = userRepo.save(user);
+        rideTicketService.createRide(user);
+        return user;
     }
 
     @Override
@@ -99,6 +112,11 @@ public class UserServiceImpl implements UserService {
         if (userDto.getAddress() != null && !userDto.getAddress().isBlank()) {
             existing.setAddress(userDto.getAddress());
         }
+        if (userDto.getCityId() != null && !userDto.getCityId().isBlank()) {
+            City city = cityRepo.findById(userDto.getCityId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+            existing.setCity(city);
+        }
         if (userDto.getPickupLocation() != null && !userDto.getPickupLocation().isEmpty()) {
             Location location = locationRepo.findById(userDto.getPickupLocation())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
@@ -122,10 +140,6 @@ public class UserServiceImpl implements UserService {
             existing.setRole(userDto.getRole());
         }
         existing.setPassword(passwordEncoder.encode("12345678"));
-
-        // if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
-        // }
-
         return userRepo.save(existing);
     }
 

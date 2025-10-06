@@ -1,8 +1,5 @@
 package com.example.TTMS.entity;
 
-
-import java.util.List;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,14 +19,13 @@ public class User {
     private String userId;
     private String username;
     private String address;
-    // @DBRef(lazy = true)
-    // private List<Location> locations;
     private String mobileNo;
     private Location pickupLocation;
     private Transport transport;
     private int noOfPerson;
-    // @DBRef
-    // private City city;
+    @DBRef
+    private City city;
+    private String pickupDate;
     private String email;
     private String password;
     private String role;

@@ -15,5 +15,11 @@ public interface TransportService {
     List<Transport> getAllTransports();
 
     Transport validateLoginCredentials(Login login);
+
+    Transport updateTransport(String id, @Valid TransportDto transportDto);
+
+    void deleteTransport(String id);
+
+    List<Transport> getTransportByLocation(String location);
     
 }

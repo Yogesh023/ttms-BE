@@ -2,8 +2,11 @@ package com.example.TTMS.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,4 +37,21 @@ public class TransportController {
     public ApiResponse<List<Transport>> getAllTransports(){
         return ApiResponse.success(transportService.getAllTransports());
     }
+
+    @PutMapping("/{id}")
+    public ApiResponse<Transport> updateTransport(@PathVariable String id, @Valid @RequestBody TransportDto transportDto) {
+        return ApiResponse.success("Transport updated successfully", transportService.updateTransport(id, transportDto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<String> deleteTransport(@PathVariable String id) {
+        transportService.deleteTransport(id);
+        return ApiResponse.success("Transport deleted successfully");
+    }
+
+    @GetMapping("location/{location}")
+    public ApiResponse<List<Transport>> getTransportByLocation(@PathVariable String location) {
+        return ApiResponse.success(transportService.getTransportByLocation(location));
+    }
+    
 }

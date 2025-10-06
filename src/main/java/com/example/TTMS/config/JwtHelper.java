@@ -31,7 +31,7 @@ public class JwtHelper {
 
     public JwtResponse createJwtForClaims(String subject, Map<String, Object> claimMap) {
         Instant now = Instant.now();
-        Instant expiry = now.plus(10, ChronoUnit.MINUTES);
+        Instant expiry = now.plus(30, ChronoUnit.MINUTES);
 
         String role = (String) claimMap.get("role");
         List<String> authorities = List.of(role);
