@@ -16,4 +16,8 @@ public interface RideTicketService {
 
     void createRide(User user);
 
+    void sendOtp(String id);
+
+    void verifyOtp(String id, String otp);
+
 }

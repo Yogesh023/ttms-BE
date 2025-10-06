@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,4 +37,17 @@ public class RideTicketController {
             Authentication authentication) {
         return ApiResponse.success(rideTicketService.getMyTickets(search, authentication));
     }
+
+    @GetMapping("/send-otp/{id}")
+    public ApiResponse<String> sendOtp(@PathVariable String id) {
+        rideTicketService.sendOtp(id);
+        return ApiResponse.success("OTP sent successfully");
+    }
+
+    @PostMapping("/verify-otp/{id}")
+    public ApiResponse<String> verifyOtp(@PathVariable String id, @RequestParam String otp) {
+        rideTicketService.verifyOtp(id, otp);
+        return ApiResponse.success("OTP verified successfully.");
+    }
+
 }

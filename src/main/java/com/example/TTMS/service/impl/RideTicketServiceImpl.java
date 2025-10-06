@@ -1,5 +1,6 @@
 package com.example.TTMS.service.impl;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,12 @@ import com.example.TTMS.repository.LocationCostRepo;
 import com.example.TTMS.repository.LocationRepo;
 import com.example.TTMS.repository.RideTicketRepo;
 import com.example.TTMS.repository.TransportRepo;
+import com.example.TTMS.repository.UserRepo;
+import com.example.TTMS.service.MailService;
+import com.example.TTMS.service.MailTemplateService;
 import com.example.TTMS.service.RideTicketService;
+
+import jakarta.mail.MessagingException;
 
 @Service
 public class RideTicketServiceImpl implements RideTicketService {
@@ -39,10 +45,13 @@ public class RideTicketServiceImpl implements RideTicketService {
     private final LocationCostRepo locationCostRepo;
     private final MongoTemplate mongoTemplate;
     private final JwtHelper jwtHelper;
+    private final MailTemplateService mailTemplateService;
+    private final MailService mailService;
+    private final UserRepo userRepo;
 
     public RideTicketServiceImpl(RideTicketRepo rideTicketRepo, TransportRepo transportRepo, CityRepo cityRepo,
             LocationRepo locationRepo, LocationCostRepo locationCostRepo, MongoTemplate mongoTemplate,
-            JwtHelper jwtHelper) {
+            JwtHelper jwtHelper, MailTemplateService mailTemplateService, MailService mailService, UserRepo userRepo) {
         this.rideTicketRepo = rideTicketRepo;
         this.transportRepo = transportRepo;
         this.cityRepo = cityRepo;
@@ -50,6 +59,9 @@ public class RideTicketServiceImpl implements RideTicketService {
         this.locationCostRepo = locationCostRepo;
         this.mongoTemplate = mongoTemplate;
         this.jwtHelper = jwtHelper;
+        this.mailTemplateService = mailTemplateService;
+        this.mailService = mailService;
+        this.userRepo = userRepo;
     }
 
     @Override
@@ -67,15 +79,15 @@ public class RideTicketServiceImpl implements RideTicketService {
         Location pickupLocation = locationRepo.findById(rideTicketDto.getPickupLocation())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pickup location not found"));
         Location dropLocation = locationRepo.findById(rideTicketDto.getDropLocation())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Drop location not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Drop location not found"));
         Transport transport = transportRepo.findById(rideTicketDto.getTransport())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "transport not found"));
-        if(!transport.getStatus().equals(TransportStatus.AVAILABLE.getLabel())) {
+        if (!transport.getStatus().equals(TransportStatus.AVAILABLE.getLabel())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transport not available");
         }
         City city = cityRepo.findById(rideTicketDto.getCity())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "city not found"));
-        
+
         RideTicket rideTicket = new RideTicket();
         rideTicket.setUserId(userId);
         rideTicket.setLocationCost(cost);
@@ -88,7 +100,8 @@ public class RideTicketServiceImpl implements RideTicketService {
         rideTicket.setCreatedAt(LocalDateTime.now());
         rideTicket.setUpdatedBy(null);
         rideTicket.setUpdatedAt(null);
-        transportRepo.updateTransportStatus(rideTicketDto.getTransport(), TransportStatus.ASSIGNED.getLabel(), mongoTemplate);
+        transportRepo.updateTransportStatus(rideTicketDto.getTransport(), TransportStatus.ASSIGNED.getLabel(),
+                mongoTemplate);
 
         return rideTicketRepo.save(rideTicket);
 
@@ -149,7 +162,68 @@ public class RideTicketServiceImpl implements RideTicketService {
         rideTicket.setUpdatedAt(null);
 
         rideTicketRepo.save(rideTicket);
-        
+
+    }
+
+    @Override
+    public void sendOtp(String id) {
+
+        RideTicket rideTicket = rideTicketRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ride ticket not found"));
+        User user = userRepo.findByUserId(rideTicket.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        if (rideTicket.isOtpSent() && rideTicket.getOtpExpiryTime() != null &&
+                rideTicket.getOtpExpiryTime().isAfter(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "OTP already sent. Please wait before requesting a new one.");
+        }
+
+        SecureRandom random = new SecureRandom();
+        String otp = String.valueOf(1000 + random.nextInt(9000));
+        String content = mailTemplateService.sendOtpMail(otp, user.getUsername());
+        try {
+            // Send email
+            mailService.sendMail(user.getEmail(), "Your Ride OTP", content);
+
+            // ✅ Only after successful mail
+            rideTicket.setOtp(otp);
+            rideTicket.setOtpExpiryTime(LocalDateTime.now().plusMinutes(5));
+            rideTicket.setOtpSent(true);
+            rideTicket.setUpdatedAt(LocalDateTime.now());
+            rideTicketRepo.save(rideTicket);
+
+        } catch (MessagingException e) {
+            // Log and propagate exception
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Failed to send OTP email. Please try again.");
+        }
+    }
+
+    @Override
+    public void verifyOtp(String ticketId, String enteredOtp) {
+
+        RideTicket rideTicket = rideTicketRepo.findById(ticketId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ride ticket not found"));
+
+        if (!rideTicket.isOtpSent() || rideTicket.getOtp() == null || rideTicket.getOtpExpiryTime() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OTP not generated for this ticket");
+        }
+
+        if (rideTicket.getOtpExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OTP has expired");
+        }
+
+        if (!rideTicket.getOtp().equals(enteredOtp)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid OTP");
+        }
+
+        rideTicket.setStatus(Status.RIDE_STARTED.getLabel());
+        rideTicket.setOtpSent(false);
+        rideTicket.setUpdatedAt(LocalDateTime.now());
+        rideTicketRepo.save(rideTicket);
+        transportRepo.updateTransportStatus(rideTicket.getTransport().getId(), TransportStatus.ON_TRIP.getLabel(),
+                mongoTemplate);
     }
 
 }
