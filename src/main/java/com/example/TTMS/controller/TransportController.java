@@ -49,9 +49,9 @@ public class TransportController {
         return ApiResponse.success("Transport deleted successfully");
     }
 
-    @GetMapping("location/{location}")
-    public ApiResponse<List<Transport>> getTransportByLocation(@PathVariable String location) {
-        return ApiResponse.success(transportService.getTransportByLocation(location));
+    @GetMapping("city/{city}")
+    public ApiResponse<List<Transport>> getTransportByCity(@PathVariable String city) {
+        return ApiResponse.success(transportService.getTransportByCity(city));
     }
     
 }

@@ -19,10 +19,10 @@ public interface TransportRepo extends MongoRepository<Transport, String> {
 
     Optional<Transport> findByTransportId(String transportId);
 
-    default List<Transport> findByLocations(String location, MongoTemplate mongoTemplate){
+    default List<Transport> getTransportByCity(String city, MongoTemplate mongoTemplate){
 
         Query query = new Query();
-        query.addCriteria(Criteria.where("locations.$id").is(new ObjectId(location)));
+        query.addCriteria(Criteria.where("city.$id").is(new ObjectId(city)));
         return mongoTemplate.find(query, Transport.class);
     }
 

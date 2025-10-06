@@ -20,6 +20,6 @@ public interface TransportService {
 
     void deleteTransport(String id);
 
-    List<Transport> getTransportByLocation(String location);
+    List<Transport> getTransportByCity(String city);
     
 }

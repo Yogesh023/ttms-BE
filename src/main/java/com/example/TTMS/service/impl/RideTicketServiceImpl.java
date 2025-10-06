@@ -27,7 +27,6 @@ import com.example.TTMS.repository.LocationCostRepo;
 import com.example.TTMS.repository.LocationRepo;
 import com.example.TTMS.repository.RideTicketRepo;
 import com.example.TTMS.repository.TransportRepo;
-import com.example.TTMS.repository.VendorRepo;
 import com.example.TTMS.service.RideTicketService;
 
 @Service
@@ -42,7 +41,7 @@ public class RideTicketServiceImpl implements RideTicketService {
     private final JwtHelper jwtHelper;
 
     public RideTicketServiceImpl(RideTicketRepo rideTicketRepo, TransportRepo transportRepo, CityRepo cityRepo,
-            LocationRepo locationRepo, LocationCostRepo locationCostRepo, MongoTemplate mongoTemplate
+            LocationRepo locationRepo, LocationCostRepo locationCostRepo, MongoTemplate mongoTemplate,
             JwtHelper jwtHelper) {
         this.rideTicketRepo = rideTicketRepo;
         this.transportRepo = transportRepo;

@@ -108,8 +108,8 @@ public class TransportServiceImpl implements TransportService {
     }
 
     @Override
-    public List<Transport> getTransportByLocation(String location) {
-        return transportRepo.findByLocations(location, mongoTemplate);
+    public List<Transport> getTransportByCity(String city) {
+        return transportRepo.getTransportByCity(city, mongoTemplate);
     }
 
 }
