@@ -1,5 +1,6 @@
 package com.example.TTMS.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -14,7 +15,7 @@ public interface RideTicketService {
 
     List<RideTicket> getMyTickets(String search, Authentication authentication);
 
-    void createRide(User user);
+    void createRide(User user, LocalDate pickupDate);
 
     void sendOtp(String id);
 

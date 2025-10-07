@@ -1,6 +1,8 @@
 package com.example.TTMS.dto;
 
 
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,8 @@ public class UserDto {
     private String mobileNo;
     @NotBlank(message = "Pickup Location is required")
     private String pickupLocation;
+    @NotNull(message = "Pickup Date is required")
+    private LocalDate pickupDate;
     @NotBlank(message = "Transport is required")
     private String transport;
     @NotNull(message = "No of Person is required")

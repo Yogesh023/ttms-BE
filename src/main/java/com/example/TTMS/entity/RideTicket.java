@@ -1,5 +1,6 @@
 package com.example.TTMS.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
@@ -22,6 +23,7 @@ public class RideTicket {
     private LocationCost locationCost;
     private Location pickupLocation;
     private Location dropLocation;
+    private LocalDate pickupDate;
     private double cost;
     private String status;
     private String otp;

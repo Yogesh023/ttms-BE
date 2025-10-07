@@ -1,6 +1,7 @@
 package com.example.TTMS.service.impl;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -146,7 +148,7 @@ public class RideTicketServiceImpl implements RideTicketService {
     }
 
     @Override
-    public void createRide(User user) {
+    public void createRide(User user, LocalDate pickupDate) {
 
         Map<String, Object> userDetails = jwtHelper.getUserDetails();
         String id = (String) userDetails.get("_id");
@@ -156,6 +158,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         rideTicket.setTransport(user.getTransport());
         rideTicket.setCity(user.getCity());
         rideTicket.setPickupLocation(user.getPickupLocation());
+        rideTicket.setPickupDate(pickupDate);
         rideTicket.setStatus(Status.PENDING.getLabel());
         rideTicket.setCreatedBy(id);
         rideTicket.setCreatedAt(LocalDateTime.now());
@@ -227,4 +230,19 @@ public class RideTicketServiceImpl implements RideTicketService {
                 mongoTemplate);
     }
 
+    @Scheduled(cron = "0 0 0 * * *")
+    public void assignTransportForToday() {
+        LocalDate today = LocalDate.now();
+
+        List<RideTicket> todayRides = rideTicketRepo.findByPickupDate(today);
+
+        for (RideTicket ride : todayRides) {
+            Transport transport = ride.getTransport();
+            if (transport != null && !(transport.getStatus().equals(TransportStatus.ON_TRIP.getLabel())
+                    || transport.getStatus().equals(TransportStatus.ASSIGNED.getLabel()))) {
+                transport.setStatus(TransportStatus.ASSIGNED.getLabel());
+                transportRepo.save(transport);
+            }
+        }
+    }
 }

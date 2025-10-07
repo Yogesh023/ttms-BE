@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         user.setTransport(transport);
         user.setNoOfPerson(userDto.getNoOfPerson());
         user = userRepo.save(user);
-        rideTicketService.createRide(user);
+        rideTicketService.createRide(user, userDto.getPickupDate());
         return user;
     }
 
