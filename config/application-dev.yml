@@ -25,6 +25,17 @@ server:
   servlet:
     context-path: /ttms
 
+springdoc:
+  swagger-ui:
+    path: /ui
+
 rsa:
   public-key: classpath:certs/public.pem
   private-key: classpath:certs/private.pem
+
+com:
+  custom:
+    reset-link: https://api.cavinkare.in/meetingagenda/api/swagger-ui/index.html
+    isSignUp: true
+    swagger-path: /ttms/api/
+    swagger-live-path: /ttms/api/

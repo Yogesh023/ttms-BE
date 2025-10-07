@@ -2,7 +2,6 @@ package com.example.TTMS.entity;
 
 import java.time.LocalDateTime;
 
-import org.springframework.cglib.core.Local;
 import org.springframework.data.annotation.Id;
 
 import lombok.AllArgsConstructor;
@@ -23,10 +22,12 @@ public class RideTicket {
     private LocationCost locationCost;
     private Location pickupLocation;
     private Location dropLocation;
+    private double cost;
     private String status;
     private String otp;
     private LocalDateTime otpExpiryTime;
     private boolean isOtpSent;
+    private String remarks;
     private String createdBy;
     private String updatedBy;
     private LocalDateTime createdAt;

@@ -21,6 +21,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
+        @SuppressWarnings("rawtypes")
         ApiResponse re = new ApiResponse(false);
         re.setMessage("Unauthourized");
 

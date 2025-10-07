@@ -17,7 +17,7 @@ import com.example.TTMS.config.JwtHelper;
 import com.example.TTMS.dto.RideTicketDto;
 import com.example.TTMS.entity.City;
 import com.example.TTMS.entity.Location;
-import com.example.TTMS.entity.LocationCost;
+import com.example.TTMS.entity.LocationCostDetails;
 import com.example.TTMS.entity.RideTicket;
 import com.example.TTMS.entity.Status;
 import com.example.TTMS.entity.Transport;
@@ -71,7 +71,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         String id = (String) userDetails.get("_id");
         String userId = (String) userDetails.get("userId");
 
-        LocationCost cost = locationCostRepo.findByPickUpAndDropLocation(rideTicketDto.getPickupLocation(),
+        LocationCostDetails cost = locationCostRepo.findByCityAndPickUpAndDropLocation(rideTicketDto.getCity(), rideTicketDto.getPickupLocation(),
                 rideTicketDto.getDropLocation(), mongoTemplate);
         if (cost == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pick up and Drop location not found");
@@ -90,11 +90,12 @@ public class RideTicketServiceImpl implements RideTicketService {
 
         RideTicket rideTicket = new RideTicket();
         rideTicket.setUserId(userId);
-        rideTicket.setLocationCost(cost);
+        // rideTicket.setLocationCost(cost);
         rideTicket.setTransport(transport);
         rideTicket.setCity(city);
         rideTicket.setPickupLocation(pickupLocation);
         rideTicket.setDropLocation(dropLocation);
+        rideTicket.setCost(cost.getCost());
         rideTicket.setStatus(Status.PENDING.getLabel());
         rideTicket.setCreatedBy(id);
         rideTicket.setCreatedAt(LocalDateTime.now());

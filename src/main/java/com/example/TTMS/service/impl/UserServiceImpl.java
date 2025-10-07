@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final LocationRepo locationRepo;
-    private final JwtHelper jwtHelper;
+    // private final JwtHelper jwtHelper;
     private final TransportRepo transportRepo;
     private final CityRepo cityRepo;
     private final RideTicketService rideTicketService;
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.locationRepo = locationRepo;
-        this.jwtHelper = jwtHelper;
+        // this.jwtHelper = jwtHelper;
         this.transportRepo = transportRepo;
         this.cityRepo = cityRepo;
         this.rideTicketService = rideTicketService;
@@ -80,8 +80,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUser(Authentication authentication) {
 
-        Map<String, Object> userDetails = jwtHelper.getUserDetails();
-        String role = (String) userDetails.get("role");
+        // Map<String, Object> userDetails = jwtHelper.getUserDetails();
+        // String role = (String) userDetails.get("role");
         return userRepo.findByRole("User");
     }
 

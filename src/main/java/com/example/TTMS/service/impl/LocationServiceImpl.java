@@ -22,14 +22,12 @@ public class LocationServiceImpl implements LocationService {
     private final LocationRepo locationRepo;
     private final CityRepo cityRepo;
     private final LocationCostRepo locationCostRepo;
-    private final TransportRepo transportRepo;
 
     public LocationServiceImpl(LocationRepo locationRepo, CityRepo cityRepo, LocationCostRepo locationCostRepo,
             TransportRepo transportRepo) {
         this.locationRepo = locationRepo;
         this.cityRepo = cityRepo;
         this.locationCostRepo = locationCostRepo;
-        this.transportRepo = transportRepo;
     }
 
     @Override
@@ -118,9 +116,9 @@ public class LocationServiceImpl implements LocationService {
         boolean usedInLocationCost = locationCostRepo.existsByLocationCostDetailsPickupLocation(location)
                 || locationCostRepo.existsByLocationCostDetailsDropLocation(location);
 
-        boolean usedInTransport = transportRepo.existsByLocationsContains(location);
+        // boolean usedInTransport = transportRepo.existsByLocationsContains(location);
 
-        if (usedInCity || usedInLocationCost || usedInTransport) {
+        if (usedInCity || usedInLocationCost) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Cannot delete location. It is already mapped in other entities.");
         }
