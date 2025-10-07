@@ -73,7 +73,8 @@ public class RideTicketServiceImpl implements RideTicketService {
         String id = (String) userDetails.get("_id");
         String userId = (String) userDetails.get("userId");
 
-        LocationCostDetails cost = locationCostRepo.findByCityAndPickUpAndDropLocation(rideTicketDto.getCity(), rideTicketDto.getPickupLocation(),
+        LocationCostDetails cost = locationCostRepo.findByCityAndPickUpAndDropLocation(rideTicketDto.getCity(),
+                rideTicketDto.getPickupLocation(),
                 rideTicketDto.getDropLocation(), mongoTemplate);
         if (cost == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pick up and Drop location not found");
@@ -245,4 +246,41 @@ public class RideTicketServiceImpl implements RideTicketService {
             }
         }
     }
+
+    @Override
+    public RideTicket updateRemarks(String id, String remarks, String dropLocation) {
+
+        RideTicket rideTicket = rideTicketRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ride ticket not found"));
+
+        rideTicket.setRemarks(remarks);
+        String finalDropLocationId;
+        if (dropLocation != null && !dropLocation.isBlank()) {
+            Location dropLoc = locationRepo.findById(dropLocation)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Drop location not found"));
+            rideTicket.setDropLocation(dropLoc);
+            finalDropLocationId = dropLocation;
+        } else {
+            if (rideTicket.getDropLocation() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Drop location is missing");
+            }
+            finalDropLocationId = rideTicket.getDropLocation().getId();
+        }
+
+        LocationCostDetails cost = locationCostRepo.findByCityAndPickUpAndDropLocation(
+                rideTicket.getCity().getId(),
+                rideTicket.getPickupLocation().getId(),
+                finalDropLocationId,
+                mongoTemplate);
+
+        if (cost == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pick up and Drop location not found");
+        }
+
+        rideTicket.setCost(cost.getCost());
+        rideTicket.setUpdatedAt(LocalDateTime.now());
+
+        return rideTicketRepo.save(rideTicket);
+    }
+
 }

@@ -21,4 +21,6 @@ public interface RideTicketService {
 
     void verifyOtp(String id, String otp);
 
+    RideTicket updateRemarks(String id, String remarks, String dropLocation);
+
 }
