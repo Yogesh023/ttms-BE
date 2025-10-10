@@ -16,6 +16,7 @@ public class Location {
     @Id
     private String id;
     private String city;
+    private String cityName;
     private String locationId;
     private String locationName;
 

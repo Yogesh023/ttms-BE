@@ -42,6 +42,7 @@ public class LocationServiceImpl implements LocationService {
         }
         Location location = new Location();
         location.setCity(locationDto.getCity());
+        location.setCityName(city.getCityName());
         location.setLocationId(locationDto.getLocationId());
         location.setLocationName(locationDto.getLocationName());
         location = locationRepo.save(location);
@@ -88,6 +89,7 @@ public class LocationServiceImpl implements LocationService {
             }
         }
         existingLocation.setCity(locationDto.getCity());
+        existingLocation.setCityName(newCity.getCityName());
         existingLocation.setLocationId(locationDto.getLocationId());
         existingLocation.setLocationName(locationDto.getLocationName());
 
