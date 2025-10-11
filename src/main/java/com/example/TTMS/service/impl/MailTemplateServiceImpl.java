@@ -6,6 +6,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import com.example.TTMS.service.MailTemplateService;
+import org.thymeleaf.context.IContext;
 
 @Service
 public class MailTemplateServiceImpl implements MailTemplateService {
@@ -22,4 +23,14 @@ public class MailTemplateServiceImpl implements MailTemplateService {
     return templateEngine.process("ride-otp", context);
   }
 
+  @Override
+  public String sendForgotPasswordLink(String username, String email, String token) {
+
+    Context context = new Context();
+    context.setVariable("recepient", username);
+    context.setVariable("resetLink", token);
+    return templateEngine.process("reset-password", context);
+  }
+
 }
+

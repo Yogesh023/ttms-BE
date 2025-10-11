@@ -3,4 +3,5 @@ public interface MailTemplateService {
 
   String sendOtpMail(String otp, String name);
 
+    String sendForgotPasswordLink(String username, String email, String token);
 }

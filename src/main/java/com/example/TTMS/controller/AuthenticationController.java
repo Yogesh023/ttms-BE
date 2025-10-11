@@ -3,13 +3,18 @@ package com.example.TTMS.controller;
 import java.util.Map;
 import java.util.HashMap;
 
+import com.example.TTMS.entity.UserPasswordForgot;
+import com.example.TTMS.repository.TransportRepo;
+import com.example.TTMS.repository.UserRepo;
+import com.example.TTMS.repository.VendorRepo;
+import com.example.TTMS.service.AuthService;
+import com.example.TTMS.service.impl.AuthServiceImpl;
+import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.TTMS.config.JwtHelper;
 import com.example.TTMS.dto.JwtResponse;
@@ -20,6 +25,7 @@ import com.example.TTMS.entity.Vendor;
 import com.example.TTMS.service.TransportService;
 import com.example.TTMS.service.UserService;
 import com.example.TTMS.service.VendorService;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,13 +35,23 @@ public class AuthenticationController {
     private final JwtHelper jwtHelper;
     private final VendorService vendorService;
     private final TransportService transportService;
+    private final UserRepo userRepo;
+
+    private final VendorRepo vendorRepo;
+    private final TransportRepo transportRepo;
+    private final AuthService authService;
 
     public AuthenticationController(UserService userService, JwtHelper jwtHelper, VendorService vendorService,
-            TransportService transportService) {
+            TransportService transportService, UserRepo userRepo, TransportRepo transportRepo, VendorRepo vendorRepo,
+                                    AuthService authService) {
         this.userService = userService;
         this.jwtHelper = jwtHelper;
         this.transportService = transportService;
         this.vendorService = vendorService;
+        this.userRepo = userRepo;
+        this.transportRepo = transportRepo;
+        this.vendorRepo = vendorRepo;
+        this.authService = authService;
     }
 
     @PostMapping("/sign-in")
@@ -93,5 +109,49 @@ public class AuthenticationController {
         return ResponseEntity.ok(response);
 
     }
+
+    @GetMapping("/reset-link/{userId}")
+    public ResponseEntity<?> sendResetLink(@PathVariable String userId)
+            throws MessagingException, Exception {
+
+        boolean linkSent = false;
+        try {
+            userService.sendForgotPasswordLink(userId);
+            linkSent = true;
+        } catch (ResponseStatusException ex) {
+            if (ex.getStatusCode() != HttpStatus.NOT_FOUND) throw ex;
+        }
+
+        if (!linkSent) {
+            try {
+                vendorService.sendForgotPasswordLink(userId);
+                linkSent = true;
+            } catch (ResponseStatusException ex) {
+                if (ex.getStatusCode() != HttpStatus.NOT_FOUND) throw ex;
+            }
+        }
+
+        if (!linkSent) {
+            try {
+                transportService.sendForgotPasswordLink(userId);
+                linkSent = true;
+            } catch (ResponseStatusException ex) {
+                if (ex.getStatusCode() != HttpStatus.NOT_FOUND) throw ex;
+            }
+        }
+
+        if (!linkSent) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not found");
+        }
+
+        return ResponseEntity.ok("Reset link sent to your email address.");
+    }
+
+    @PutMapping("/forgot-password")
+    public ResponseEntity<?> saveResetPassword(@Valid @RequestBody UserPasswordForgot user) throws Exception {
+        authService.resetPassword(user);
+        return ResponseEntity.ok("Password changed successfully.");
+    }
+
 
 }

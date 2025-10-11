@@ -1,6 +1,7 @@
 package com.example.TTMS.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -31,5 +32,7 @@ public class User {
     private String email;
     private String password;
     private String role;
+    private boolean isforgot;
+    private LocalDateTime expiryDate;
     
 }

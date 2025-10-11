@@ -17,6 +17,7 @@ public class RideTicket {
     @Id
     private String id;
     private String userId;
+    private String mobileNo;
     private City City;
     private Vendor vendor;
     private Transport transport;

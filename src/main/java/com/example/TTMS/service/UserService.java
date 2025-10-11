@@ -2,6 +2,8 @@ package com.example.TTMS.service;
 
 import java.util.List;
 
+import com.example.TTMS.entity.UserPasswordForgot;
+import jakarta.mail.MessagingException;
 import org.springframework.security.core.Authentication;
 
 import com.example.TTMS.dto.Login;
@@ -22,4 +24,7 @@ public interface UserService {
 
     void deleteUser(String id);
 
+    void sendForgotPasswordLink(String email) throws MessagingException;
+
+//    void resetPassword(UserPasswordForgot user);
 }

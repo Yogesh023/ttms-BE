@@ -2,6 +2,7 @@ package com.example.TTMS.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.TTMS.dto.ApiResponse;
 import com.example.TTMS.dto.UserDto;
 import com.example.TTMS.entity.User;
+import com.example.TTMS.entity.UserPasswordForgot;
 import com.example.TTMS.service.UserService;
 
 import jakarta.validation.Valid;
+import jakarta.mail.MessagingException;
 
 @RestController
 @RequestMapping("/user")
@@ -30,8 +33,8 @@ public class UserController {
     }
 
     @PostMapping()
-    public ApiResponse<User> addUser(@Valid @RequestBody UserDto userDto) {  
-        User createdUser = userService.addUser(userDto);      
+    public ApiResponse<User> addUser(@Valid @RequestBody UserDto userDto) {
+        User createdUser = userService.addUser(userDto);
         return ApiResponse.success("User created successfully", createdUser);
     }
 
@@ -56,5 +59,17 @@ public class UserController {
         userService.deleteUser(id);
         return ApiResponse.success("User deleted successfully", null);
     }
-    
+
+    @GetMapping("/reset-link/{email}")
+    public ResponseEntity<?> sendResetLink(@PathVariable String email) throws MessagingException, Exception { 
+        userService.sendForgotPasswordLink(email); 
+        return ResponseEntity.ok("Reset link sent to your email address.");
+    }
+
+//    @PutMapping("/forgot-password")
+//    public ResponseEntity<?> saveResetPassword(@Valid @RequestBody UserPasswordForgot user) throws Exception{
+//        userService.resetPassword(user);
+//        return ResponseEntity.ok("Password changed successfully.");
+//    }
+
 }

@@ -72,6 +72,8 @@ public class RideTicketServiceImpl implements RideTicketService {
         Map<String, Object> userDetails = jwtHelper.getUserDetails();
         String id = (String) userDetails.get("_id");
         String userId = (String) userDetails.get("userId");
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         LocationCostDetails cost = locationCostRepo.findByCityAndPickUpAndDropLocation(rideTicketDto.getCity(),
                 rideTicketDto.getPickupLocation(),
@@ -93,6 +95,7 @@ public class RideTicketServiceImpl implements RideTicketService {
 
         RideTicket rideTicket = new RideTicket();
         rideTicket.setUserId(userId);
+        rideTicket.setMobileNo(user.getMobileNo());
         // rideTicket.setLocationCost(cost);
         rideTicket.setTransport(transport);
         rideTicket.setCity(city);
@@ -116,6 +119,7 @@ public class RideTicketServiceImpl implements RideTicketService {
 
         Map<String, Object> userDetails = jwtHelper.getUserDetails();
         String id = (String) userDetails.get("_id");
+        String userId = (String) userDetails.get("userId");
 
         String role = (String) userDetails.get("role");
 
@@ -129,7 +133,7 @@ public class RideTicketServiceImpl implements RideTicketService {
                 query.addCriteria(Criteria.where("transport.id").is(id));
                 break;
             case "USER":
-                query.addCriteria(Criteria.where("userId").is(id));
+                query.addCriteria(Criteria.where("userId").is(userId));
                 break;
             case "SUPERADMIN":
                 break;
@@ -156,6 +160,7 @@ public class RideTicketServiceImpl implements RideTicketService {
 
         RideTicket rideTicket = new RideTicket();
         rideTicket.setUserId(user.getUserId());
+        rideTicket.setMobileNo(user.getMobileNo());
         rideTicket.setTransport(user.getTransport());
         rideTicket.setCity(user.getCity());
         rideTicket.setPickupLocation(user.getPickupLocation());

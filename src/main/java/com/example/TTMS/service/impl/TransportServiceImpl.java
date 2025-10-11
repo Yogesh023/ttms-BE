@@ -2,7 +2,12 @@ package com.example.TTMS.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import com.example.TTMS.config.JwtHelper;
+import com.example.TTMS.service.MailService;
+import com.example.TTMS.service.MailTemplateService;
+import jakarta.mail.MessagingException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,14 +35,21 @@ public class TransportServiceImpl implements TransportService {
     private final CityRepo cityRepo;
     private final PasswordEncoder passwordEncoder;
     private final MongoTemplate mongoTemplate;
+    private final JwtHelper jwtHelper;
+    private final MailTemplateService mailTemplateService;
+    private final MailService mailService;
 
     public TransportServiceImpl(TransportRepo transportRepo, VendorRepo vendorRepo, CityRepo cityRepo,
-            PasswordEncoder passwordEncoder, MongoTemplate mongoTemplate) {
+            PasswordEncoder passwordEncoder, MongoTemplate mongoTemplate, JwtHelper jwtHelper,
+                                MailTemplateService mailTemplateService, MailService mailService ) {
         this.transportRepo = transportRepo;
         this.vendorRepo = vendorRepo;
         this.cityRepo = cityRepo;
         this.passwordEncoder = passwordEncoder;
         this.mongoTemplate = mongoTemplate;
+        this.jwtHelper = jwtHelper;
+        this.mailTemplateService = mailTemplateService;
+        this.mailService = mailService;
     }
 
     @Override
@@ -108,8 +120,23 @@ public class TransportServiceImpl implements TransportService {
     }
 
     @Override
-    public List<Transport> getTransportByCity(String city) {
-        return transportRepo.getTransportByCity(city, mongoTemplate);
+    public List<Transport> getTransportByCity(String city, int seater) {
+        return transportRepo.getTransportByCity(city, seater, mongoTemplate);
     }
+
+    @Override
+    public void sendForgotPasswordLink(String transportId) throws MessagingException {
+        Optional<Transport> optionalTransport = transportRepo.findByTransportId(transportId);
+        Transport transport = optionalTransport.get();
+        if (transport == null){
+             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found with email: " + transport.getEmail());
+        }
+
+        String token = jwtHelper.generateJWTTokenForResetPassword(transport.getEmail());
+        String content = mailTemplateService.sendForgotPasswordLink(null, transport.getEmail(), token);
+        mailService.sendMail(transport.getEmail(), "Reset Password", content);
+        transportRepo.updateResetValue(transport.getEmail(), mongoTemplate);
+    }
+
 
 }

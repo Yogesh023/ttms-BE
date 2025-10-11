@@ -6,6 +6,7 @@ import com.example.TTMS.dto.Login;
 import com.example.TTMS.dto.TransportDto;
 import com.example.TTMS.entity.Transport;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 public interface TransportService {
@@ -20,6 +21,7 @@ public interface TransportService {
 
     void deleteTransport(String id);
 
-    List<Transport> getTransportByCity(String city);
-    
+    List<Transport> getTransportByCity(String city, int seater);
+
+    void sendForgotPasswordLink(String userId) throws MessagingException;
 }

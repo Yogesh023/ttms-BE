@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Document(collection = "transports")
 @Data
 @AllArgsConstructor
@@ -20,6 +22,7 @@ public class Transport {
     private String vehicleNo;
     private String ownerDetails;
     private String contact;
+    private String email;
     private String type;
     private int seater;
     private String vendorId;
@@ -28,5 +31,7 @@ public class Transport {
     @DBRef
     private City city;
     private String status;
+    private boolean isforgot;
+    private LocalDateTime expiryDate;
 
 }

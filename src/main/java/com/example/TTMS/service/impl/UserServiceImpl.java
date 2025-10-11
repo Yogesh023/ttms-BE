@@ -2,6 +2,13 @@ package com.example.TTMS.service.impl;
 
 import java.util.*;
 
+import com.example.TTMS.entity.*;
+import com.example.TTMS.service.MailService;
+import com.example.TTMS.service.MailTemplateService;
+import com.mongodb.client.result.UpdateResult;
+import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,10 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.TTMS.config.JwtHelper;
 import com.example.TTMS.dto.Login;
 import com.example.TTMS.dto.UserDto;
-import com.example.TTMS.entity.City;
-import com.example.TTMS.entity.Location;
-import com.example.TTMS.entity.Transport;
-import com.example.TTMS.entity.User;
 import com.example.TTMS.repository.CityRepo;
 import com.example.TTMS.repository.LocationRepo;
 import com.example.TTMS.repository.TransportRepo;
@@ -32,10 +35,15 @@ public class UserServiceImpl implements UserService {
     private final TransportRepo transportRepo;
     private final CityRepo cityRepo;
     private final RideTicketService rideTicketService;
+    private final JwtHelper jwtHelper;
+    private final MailTemplateService mailTemplateService;
+    private final MailService mailService;
+    private final MongoTemplate mongoTemplate;
 
     public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder,
             LocationRepo locationRepo, JwtHelper jwtHelper, TransportRepo transportRepo, CityRepo cityRepo,
-            RideTicketService rideTicketService) {
+            RideTicketService rideTicketService, MailTemplateService mailTemplateService, MailService mailService,
+                           MongoTemplate mongoTemplate) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.locationRepo = locationRepo;
@@ -43,6 +51,10 @@ public class UserServiceImpl implements UserService {
         this.transportRepo = transportRepo;
         this.cityRepo = cityRepo;
         this.rideTicketService = rideTicketService;
+        this.jwtHelper = jwtHelper;
+        this.mailTemplateService = mailTemplateService;
+        this.mailService = mailService;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
@@ -150,5 +162,35 @@ public class UserServiceImpl implements UserService {
         }
         userRepo.deleteById(id);
     }
+
+    @Override
+    public void sendForgotPasswordLink(String userId) throws MessagingException {
+        Optional<User> optionalUser = userRepo.findByUserId(userId);
+        User user = optionalUser.get();
+        if (user == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found with email: " + user.getEmail());
+
+        }
+        String token = jwtHelper.generateJWTTokenForResetPassword(user.getEmail());
+        String content = mailTemplateService.sendForgotPasswordLink(user.getUsername(), user.getEmail(), token);
+        mailService.sendMail(user.getEmail(), "Reset Password", content);
+        userRepo.updateResetValue(user.getEmail(), mongoTemplate);
+    }
+
+//    @Override
+//    public void resetPassword(@Valid UserPasswordForgot userRequest){
+//        Map<String, Object> decodedData = jwtHelper.decodeJWTTokenForResetPassword(userRequest.getToken());
+//        String email = (String) decodedData.get("email");
+//        User user = userRepo.findByEmail(email).orElseThrow(() ->
+//                new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found with email: " + email));
+//        if (user.getExpiryDate().isAfter(LocalDateTime.now())) {
+//            UpdateResult result = userRepo.updatePasswordByEmailForgotPassword(email, encoder.encode(userRequest.getPassword()), mongoTemplate);
+//            if (result.getMatchedCount() == 0) {
+//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Link invalid");
+//            }
+//        } else {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Link expired");
+//        }
+//    }
 
 }

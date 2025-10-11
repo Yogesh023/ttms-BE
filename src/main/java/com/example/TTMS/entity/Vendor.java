@@ -1,5 +1,6 @@
 package com.example.TTMS.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -31,5 +32,7 @@ public class Vendor {
     // private List<Location> locations;
     @DBRef
     private List<Transport> transport;
+    private boolean isforgot;
+    private LocalDateTime expiryDate;
     
 }

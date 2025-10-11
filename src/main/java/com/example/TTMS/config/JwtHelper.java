@@ -1,18 +1,18 @@
 package com.example.TTMS.config;
 
+import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
 
 import com.example.TTMS.dto.JwtResponse;
@@ -90,4 +90,23 @@ public class JwtHelper {
                 authentication.isAuthenticated();
     }
 
+    public String generateJWTTokenForResetPassword(String email) {
+        Instant now = Instant.now();
+        JwtClaimsSet claims = JwtClaimsSet.builder().issuer("self").issuedAt(now).subject(email)
+                .expiresAt(now.plus(10, ChronoUnit.MINUTES)).build();
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+
+    public Map<String, Object> decodeJWTTokenForResetPassword(String token) {
+        Map<String, Object> userDetails = new HashMap<>();
+        try {
+            Jwt decode = jwtDecoder.decode(token);
+            String email = decode.getSubject();
+            Instant expiration = decode.getExpiresAt();
+            boolean isExpired = Instant.now().isAfter(expiration);
+            userDetails.put("email", email); userDetails.put("expired", isExpired); }
+        catch (JwtException e) {
+            userDetails.put("expired", true);
+        } return userDetails;
+    }
 }

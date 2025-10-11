@@ -5,6 +5,7 @@ import java.util.List;
 import com.example.TTMS.dto.Login;
 import com.example.TTMS.dto.VendorDTO;
 import com.example.TTMS.entity.Vendor;
+import jakarta.mail.MessagingException;
 
 public interface VendorService {
 
@@ -21,4 +22,6 @@ public interface VendorService {
     Vendor validateLoginCredentials(Login login);
 
     List<Vendor> getVendorsByCityAndLocation(String cityId, List<String> locationIds);
+
+    void sendForgotPasswordLink(String userId) throws MessagingException;
 }

@@ -1,8 +1,12 @@
 package com.example.TTMS.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.TTMS.entity.User;
+import com.example.TTMS.entity.Vendor;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -18,10 +22,10 @@ public interface TransportRepo extends MongoRepository<Transport, String> {
 
     Optional<Transport> findByTransportId(String transportId);
 
-    default List<Transport> getTransportByCity(String city, MongoTemplate mongoTemplate){
+    default List<Transport> getTransportByCity(String city, int seater, MongoTemplate mongoTemplate){
 
         Query query = new Query();
-        query.addCriteria(Criteria.where("city.$id").is(new ObjectId(city)));
+        query.addCriteria(Criteria.where("city.$id").is(new ObjectId(city)).and("seater").is(seater));
         return mongoTemplate.find(query, Transport.class);
     }
 
@@ -31,5 +35,25 @@ public interface TransportRepo extends MongoRepository<Transport, String> {
         Update update = new Update();
         update.set("status", status);
         mongoTemplate.updateFirst(query, update, Transport.class);
+    }
+
+    Transport findByEmail(String email);
+
+    default void updateResetValue(String email, MongoTemplate mongoTemplate) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("email").is(email));
+        Update update = new Update();
+        update.set("isforgot", true);
+        update.set("expiryDate", LocalDateTime.now().plusMinutes(10));
+        mongoTemplate.updateFirst(query, update, Transport.class);
+    }
+
+    default UpdateResult updatePasswordByEmailForgotPassword(String email, String password, MongoTemplate mongoTemplate){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("email").is(email));
+        Update update = new Update();
+        update.set("password", password);
+        update.set("isforgot", false);
+        return mongoTemplate.updateFirst(query, update, Transport.class);
     }
 }
