@@ -92,8 +92,8 @@ public class SecurityConfig {
                                 xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK)))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/ui", "/swagger-ui/**", "/docs/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/reset-link/{userId}").permitAll()
-                        .requestMatchers("/forgot-password").permitAll()
+                        .requestMatchers("/auth/reset-link/{userId}").permitAll()
+                        .requestMatchers("/auth/forgot-password").permitAll()
                         .requestMatchers("/auth/sign-in").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
