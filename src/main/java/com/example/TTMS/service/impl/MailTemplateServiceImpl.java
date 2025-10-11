@@ -7,7 +7,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import com.example.TTMS.service.MailTemplateService;
-import org.thymeleaf.context.IContext;
 
 @Service
 public class MailTemplateServiceImpl implements MailTemplateService {
@@ -17,7 +16,7 @@ public class MailTemplateServiceImpl implements MailTemplateService {
 
   @Value("${com.custom.reset-link}")
   private String resetLink;
-  
+
   @Override
   public String sendOtpMail(String otp, String name) {
 
