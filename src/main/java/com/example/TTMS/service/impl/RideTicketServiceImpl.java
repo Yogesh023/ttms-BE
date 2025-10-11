@@ -127,7 +127,7 @@ public class RideTicketServiceImpl implements RideTicketService {
 
         switch (role.toUpperCase()) {
             case "VENDOR":
-                query.addCriteria(Criteria.where("vendor.id").is(id));
+                query.addCriteria(Criteria.where("transport.vendorId").is(id));
                 break;
             case "TRANSPORT":
                 query.addCriteria(Criteria.where("transport.id").is(id));
@@ -283,6 +283,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         }
 
         rideTicket.setCost(cost.getCost());
+        rideTicket.setStatus(Status.COMPLETED.getLabel());
         rideTicket.setUpdatedAt(LocalDateTime.now());
 
         return rideTicketRepo.save(rideTicket);

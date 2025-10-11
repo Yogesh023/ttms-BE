@@ -82,6 +82,7 @@ public class UserServiceImpl implements UserService {
         Transport transport = transportRepo.findById(userDto.getTransport())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transport not found"));
         user.setNoOfPerson(userDto.getNoOfPerson());
+        userDto.setPickupDate(userDto.getPickupDate());
         user.setTransport(transport);
         user.setNoOfPerson(userDto.getNoOfPerson());
         user = userRepo.save(user);
@@ -144,6 +145,9 @@ public class UserServiceImpl implements UserService {
         }
         if (userDto.getNoOfPerson() != 0) {
             existing.setNoOfPerson(userDto.getNoOfPerson());
+        }
+        if (userDto.getPickupDate() != null){
+            existing.setPickupDate(userDto.getPickupDate());
         }
         if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) {
             existing.setEmail(userDto.getEmail());

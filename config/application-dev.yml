@@ -35,7 +35,7 @@ rsa:
 
 com:
   custom:
-    reset-link: https://api.cavinkare.in/meetingagenda/api/swagger-ui/index.html
+    reset-link: http://localhost:5173
     isSignUp: true
     swagger-path: /ttms/api/
     swagger-live-path: /ttms/api/
