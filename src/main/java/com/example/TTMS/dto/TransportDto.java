@@ -25,6 +25,8 @@ public class TransportDto {
     private int seater;
     @NotBlank(message = "Vendor is required")
     private String vendor;
+    @NotBlank(message = "Mail is required")
+    private String email;
     @NotBlank(message = "City is required")
     private String City;
     

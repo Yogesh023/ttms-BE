@@ -65,6 +65,7 @@ public class TransportServiceImpl implements TransportService {
         Vendor vendor = vendorRepo.findById(transportDto.getVendor())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "vendor not found"));
         transport.setVendorId(transportDto.getVendor());
+        transport.setEmail(transportDto.getEmail());
         transport.setPassword(passwordEncoder.encode("12345678"));
         transport.setRole("Transport");
         City city = cityRepo.findById(transportDto.getCity())
@@ -104,6 +105,7 @@ public class TransportServiceImpl implements TransportService {
         existingTransport.setContact(transportDto.getContact());
         existingTransport.setType(transportDto.getType());
         existingTransport.setSeater(transportDto.getSeater());
+        existingTransport.setEmail(transportDto.getEmail());
         existingTransport.setVendorId(transportDto.getVendor());
         City city = cityRepo.findById(transportDto.getCity())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
