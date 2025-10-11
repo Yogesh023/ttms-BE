@@ -10,7 +10,7 @@ public enum Status {
     BOOKED("Booked"),
     RIDE_STARTED("Ride Started"),
     CANCELLED("Cancelled"),
-    COMPLETED("COmpleted");
+    COMPLETED("Completed");
 
     private final String label;
 

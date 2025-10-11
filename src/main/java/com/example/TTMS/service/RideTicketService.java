@@ -3,6 +3,7 @@ package com.example.TTMS.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.example.TTMS.entity.Status;
 import org.springframework.security.core.Authentication;
 
 import com.example.TTMS.dto.RideTicketDto;
@@ -21,6 +22,6 @@ public interface RideTicketService {
 
     void verifyOtp(String id, String otp);
 
-    RideTicket updateRemarks(String id, String remarks, String dropLocation);
+    RideTicket updateRemarks(String id, String remarks, String dropLocation, String status);
 
 }

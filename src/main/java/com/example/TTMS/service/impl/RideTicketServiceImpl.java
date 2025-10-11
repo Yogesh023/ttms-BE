@@ -253,12 +253,14 @@ public class RideTicketServiceImpl implements RideTicketService {
     }
 
     @Override
-    public RideTicket updateRemarks(String id, String remarks, String dropLocation) {
+    public RideTicket updateRemarks(String id, String remarks, String dropLocation, String status) {
 
         RideTicket rideTicket = rideTicketRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ride ticket not found"));
 
-        rideTicket.setRemarks(remarks);
+        if (remarks != null){
+            rideTicket.setRemarks(remarks);
+        }
         String finalDropLocationId;
         if (dropLocation != null && !dropLocation.isBlank()) {
             Location dropLoc = locationRepo.findById(dropLocation)
@@ -283,7 +285,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         }
 
         rideTicket.setCost(cost.getCost());
-        rideTicket.setStatus(Status.COMPLETED.getLabel());
+        rideTicket.setStatus(status);
         rideTicket.setUpdatedAt(LocalDateTime.now());
 
         return rideTicketRepo.save(rideTicket);

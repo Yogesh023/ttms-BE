@@ -2,6 +2,7 @@ package com.example.TTMS.controller;
 
 import java.util.List;
 
+import com.example.TTMS.entity.Status;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,9 +53,9 @@ public class RideTicketController {
     }
 
     @PutMapping("/update-remarks/{id}")
-    public ApiResponse<RideTicket> updateRemarks(@PathVariable String id, @RequestParam String remarks,
-            @RequestParam(required = false) String dropLocation) {
-        return ApiResponse.success("Remarks updated successfully", rideTicketService.updateRemarks(id, remarks, dropLocation));
+    public ApiResponse<RideTicket> updateRemarks(@PathVariable String id, @RequestParam(required = false) String remarks,
+            @RequestParam(required = false) String dropLocation, @RequestParam String status) {
+        return ApiResponse.success("Remarks updated successfully", rideTicketService.updateRemarks(id, remarks, dropLocation, status));
     }
 
 }
