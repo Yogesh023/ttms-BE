@@ -72,6 +72,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         Map<String, Object> userDetails = jwtHelper.getUserDetails();
         String id = (String) userDetails.get("_id");
         String userId = (String) userDetails.get("userId");
+        String role = (String) userDetails.get("role");
         User user = userRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
@@ -107,6 +108,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         rideTicket.setCreatedAt(LocalDateTime.now());
         rideTicket.setUpdatedBy(null);
         rideTicket.setUpdatedAt(null);
+        rideTicket.setCreatedRole(role);
         transportRepo.updateTransportStatus(rideTicketDto.getTransport(), TransportStatus.ASSIGNED.getLabel(),
                 mongoTemplate);
 
@@ -157,6 +159,7 @@ public class RideTicketServiceImpl implements RideTicketService {
 
         Map<String, Object> userDetails = jwtHelper.getUserDetails();
         String id = (String) userDetails.get("_id");
+        String role = (String) userDetails.get("role");
 
         RideTicket rideTicket = new RideTicket();
         rideTicket.setUserId(user.getUserId());
@@ -170,7 +173,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         rideTicket.setCreatedAt(LocalDateTime.now());
         rideTicket.setUpdatedBy(null);
         rideTicket.setUpdatedAt(null);
-
+        rideTicket.setCreatedRole(role);
         rideTicketRepo.save(rideTicket);
 
     }
@@ -287,7 +290,8 @@ public class RideTicketServiceImpl implements RideTicketService {
         rideTicket.setCost(cost.getCost());
         rideTicket.setStatus(status);
         rideTicket.setUpdatedAt(LocalDateTime.now());
-
+        transportRepo.updateTransportStatus(rideTicket.getTransport().getId(), TransportStatus.AVAILABLE.getLabel(),
+                mongoTemplate);
         return rideTicketRepo.save(rideTicket);
     }
 

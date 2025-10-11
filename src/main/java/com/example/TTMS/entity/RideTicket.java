@@ -35,5 +35,6 @@ public class RideTicket {
     private String updatedBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String createdRole;
     
 }
