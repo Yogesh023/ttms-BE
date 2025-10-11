@@ -144,13 +144,18 @@ public class AuthenticationController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not found");
         }
 
-        return ResponseEntity.ok("Reset link sent to your email address.");
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Reset link sent to your email address.");
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/forgot-password")
     public ResponseEntity<?> saveResetPassword(@Valid @RequestBody UserPasswordForgot user) throws Exception {
         authService.resetPassword(user);
-        return ResponseEntity.ok("Password changed successfully.");
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Password changed successfully.");
+        return ResponseEntity.ok(response);
     }
 
 

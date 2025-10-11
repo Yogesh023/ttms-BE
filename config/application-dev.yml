@@ -11,8 +11,8 @@ spring:
   mail:
     host: sandbox.smtp.mailtrap.io
     port: 2525
-    username: 7d65271df2efc2
-    password: 0ed24d729c21c5
+    username: 740d28bf9d4081
+    password: e7c6ef03805284
     properties:
       mail:
         smtp:
@@ -35,7 +35,7 @@ rsa:
 
 com:
   custom:
-    reset-link: http://localhost:5173/reset-password
+    reset-link: http://localhost:5173/#/reset-password
     isSignUp: true
     swagger-path: /ttms/api/
     swagger-live-path: /ttms/api/

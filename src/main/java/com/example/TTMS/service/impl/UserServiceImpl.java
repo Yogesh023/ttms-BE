@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
 
         // Map<String, Object> userDetails = jwtHelper.getUserDetails();
         // String role = (String) userDetails.get("role");
-        return userRepo.findByRole("User");
+        return userRepo.findByRole("user");
     }
 
     @Override
