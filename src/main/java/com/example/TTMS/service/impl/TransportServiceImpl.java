@@ -131,7 +131,7 @@ public class TransportServiceImpl implements TransportService {
         Optional<Transport> optionalTransport = transportRepo.findByTransportId(transportId);
         Transport transport = optionalTransport.get();
         if (transport == null){
-             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found with email: " + transport.getEmail());
+             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found with email");
         }
 
         String token = jwtHelper.generateJWTTokenForResetPassword(transport.getEmail());

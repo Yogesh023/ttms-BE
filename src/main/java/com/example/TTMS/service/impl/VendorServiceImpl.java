@@ -125,7 +125,7 @@ public class VendorServiceImpl implements VendorService {
         Optional<Vendor> vendorOptional = vendorRepo.findByVendorId(vendorId);
         Vendor vendor = vendorOptional.get();
         if(vendor == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found with email: " + vendor.getEmail());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor not found");
         }
         String token = jwtHelper.generateJWTTokenForResetPassword(vendor.getEmail());
         String content = mailTemplateService.sendForgotPasswordLink(vendor.getVendorName(), vendor.getEmail(), token);

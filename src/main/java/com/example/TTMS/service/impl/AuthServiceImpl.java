@@ -11,7 +11,6 @@ import com.example.TTMS.repository.VendorRepo;
 import com.example.TTMS.service.AuthService;
 import com.mongodb.client.result.UpdateResult;
 import jakarta.validation.Valid;
-import org.springframework.data.mongodb.MongoManagedTypes;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import com.example.TTMS.entity.City;
 import com.example.TTMS.entity.User;
 
 public interface UserRepo extends MongoRepository<User, String> {
@@ -38,4 +39,6 @@ public interface UserRepo extends MongoRepository<User, String> {
         update.set("isforgot", false);
         return mongoTemplate.updateFirst(query, update, User.class);
     }
+
+    long countByCity(City city);
 }

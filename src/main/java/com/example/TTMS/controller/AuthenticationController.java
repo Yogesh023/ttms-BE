@@ -4,11 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import com.example.TTMS.entity.UserPasswordForgot;
-import com.example.TTMS.repository.TransportRepo;
-import com.example.TTMS.repository.UserRepo;
-import com.example.TTMS.repository.VendorRepo;
 import com.example.TTMS.service.AuthService;
-import com.example.TTMS.service.impl.AuthServiceImpl;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -35,22 +31,14 @@ public class AuthenticationController {
     private final JwtHelper jwtHelper;
     private final VendorService vendorService;
     private final TransportService transportService;
-    private final UserRepo userRepo;
-
-    private final VendorRepo vendorRepo;
-    private final TransportRepo transportRepo;
     private final AuthService authService;
 
     public AuthenticationController(UserService userService, JwtHelper jwtHelper, VendorService vendorService,
-            TransportService transportService, UserRepo userRepo, TransportRepo transportRepo, VendorRepo vendorRepo,
-                                    AuthService authService) {
+            TransportService transportService,  AuthService authService) {
         this.userService = userService;
         this.jwtHelper = jwtHelper;
         this.transportService = transportService;
         this.vendorService = vendorService;
-        this.userRepo = userRepo;
-        this.transportRepo = transportRepo;
-        this.vendorRepo = vendorRepo;
         this.authService = authService;
     }
 

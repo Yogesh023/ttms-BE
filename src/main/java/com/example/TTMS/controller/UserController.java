@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.TTMS.dto.ApiResponse;
 import com.example.TTMS.dto.UserDto;
 import com.example.TTMS.entity.User;
-import com.example.TTMS.entity.UserPasswordForgot;
 import com.example.TTMS.service.UserService;
 
 import jakarta.validation.Valid;

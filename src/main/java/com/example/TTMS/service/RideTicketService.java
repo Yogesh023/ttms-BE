@@ -3,7 +3,6 @@ package com.example.TTMS.service;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.example.TTMS.entity.Status;
 import org.springframework.security.core.Authentication;
 
 import com.example.TTMS.dto.RideTicketDto;

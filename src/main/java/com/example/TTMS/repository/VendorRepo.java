@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.TTMS.entity.User;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -68,4 +67,6 @@ public interface VendorRepo extends MongoRepository<Vendor, String> {
         update.set("isforgot", false);
         return mongoTemplate.updateFirst(query, update, Vendor.class);
     }
+
+    long countByCity(City city);
 }

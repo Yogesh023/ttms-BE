@@ -2,7 +2,6 @@ package com.example.TTMS.service;
 
 import java.util.List;
 
-import com.example.TTMS.entity.UserPasswordForgot;
 import jakarta.mail.MessagingException;
 import org.springframework.security.core.Authentication;
 

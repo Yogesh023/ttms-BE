@@ -5,9 +5,7 @@ import java.util.*;
 import com.example.TTMS.entity.*;
 import com.example.TTMS.service.MailService;
 import com.example.TTMS.service.MailTemplateService;
-import com.mongodb.client.result.UpdateResult;
 import jakarta.mail.MessagingException;
-import jakarta.validation.Valid;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -172,7 +170,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepo.findByUserId(userId);
         User user = optionalUser.get();
         if (user == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found with email: " + user.getEmail());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found with email");
 
         }
         String token = jwtHelper.generateJWTTokenForResetPassword(user.getEmail());
