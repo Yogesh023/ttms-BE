@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,5 +17,6 @@ public class DashboardCount {
     private long vendorCount;
     private long transportCount;
     private long rideTicketCount;
+    private Map<String, Double> cityCostMap;
 
 }
