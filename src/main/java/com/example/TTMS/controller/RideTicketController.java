@@ -46,15 +46,17 @@ public class RideTicketController {
     }
 
     @PostMapping("/verify-otp/{id}")
-    public ApiResponse<String> verifyOtp(@PathVariable String id, @RequestParam String otp) {
-        rideTicketService.verifyOtp(id, otp);
+    public ApiResponse<String> verifyOtp(@PathVariable String id, @RequestParam String otp,
+            @RequestParam(required = false) String dropLocation) {
+        rideTicketService.verifyOtp(id, otp, dropLocation);
         return ApiResponse.success("OTP verified successfully.");
     }
 
     @PutMapping("/update-remarks/{id}")
-    public ApiResponse<RideTicket> updateRemarks(@PathVariable String id, @RequestParam(required = false) String remarks,
-            @RequestParam(required = false) String dropLocation, @RequestParam String status) {
-        return ApiResponse.success("Remarks updated successfully", rideTicketService.updateRemarks(id, remarks, dropLocation, status));
+    public ApiResponse<RideTicket> updateRemarks(@PathVariable String id,
+            @RequestParam(required = false) String remarks, @RequestParam String status) {
+        return ApiResponse.success("Remarks updated successfully",
+                rideTicketService.updateRemarks(id, remarks, status));
     }
 
 }

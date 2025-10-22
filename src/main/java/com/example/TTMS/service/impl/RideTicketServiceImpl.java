@@ -195,10 +195,8 @@ public class RideTicketServiceImpl implements RideTicketService {
         String otp = String.valueOf(1000 + random.nextInt(9000));
         String content = mailTemplateService.sendOtpMail(otp, user.getUsername());
         try {
-            // Send email
             mailService.sendMail(user.getEmail(), "Your Ride OTP", content);
 
-            // ✅ Only after successful mail
             rideTicket.setOtp(otp);
             rideTicket.setOtpExpiryTime(LocalDateTime.now().plusMinutes(5));
             rideTicket.setOtpSent(true);
@@ -206,7 +204,6 @@ public class RideTicketServiceImpl implements RideTicketService {
             rideTicketRepo.save(rideTicket);
 
         } catch (MessagingException e) {
-            // Log and propagate exception
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Failed to send OTP email. Please try again.");
@@ -214,7 +211,7 @@ public class RideTicketServiceImpl implements RideTicketService {
     }
 
     @Override
-    public void verifyOtp(String ticketId, String enteredOtp) {
+    public void verifyOtp(String ticketId, String enteredOtp, String dropLocation) {
 
         RideTicket rideTicket = rideTicketRepo.findById(ticketId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ride ticket not found"));
@@ -229,6 +226,23 @@ public class RideTicketServiceImpl implements RideTicketService {
 
         if (!rideTicket.getOtp().equals(enteredOtp)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid OTP");
+        }
+
+        if (dropLocation != null && !dropLocation.isBlank()) {
+            Location dropLoc = locationRepo.findById(dropLocation)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Drop location not found"));
+            rideTicket.setDropLocation(dropLoc);
+
+            LocationCostDetails cost = locationCostRepo.findByCityAndPickUpAndDropLocation(
+                    rideTicket.getCity().getId(),
+                    rideTicket.getPickupLocation().getId(),
+                    dropLocation,
+                    mongoTemplate);
+
+            if (cost == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pick up and Drop location not found");
+            }
+            rideTicket.setCost(cost.getCost());
         }
 
         rideTicket.setStatus(Status.RIDE_STARTED.getLabel());
@@ -256,38 +270,15 @@ public class RideTicketServiceImpl implements RideTicketService {
     }
 
     @Override
-    public RideTicket updateRemarks(String id, String remarks, String dropLocation, String status) {
+    public RideTicket updateRemarks(String id, String remarks, String status) {
 
         RideTicket rideTicket = rideTicketRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ride ticket not found"));
 
-        if (remarks != null){
+        if (remarks != null) {
             rideTicket.setRemarks(remarks);
         }
-        String finalDropLocationId;
-        if (dropLocation != null && !dropLocation.isBlank()) {
-            Location dropLoc = locationRepo.findById(dropLocation)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Drop location not found"));
-            rideTicket.setDropLocation(dropLoc);
-            finalDropLocationId = dropLocation;
-        } else {
-            if (rideTicket.getDropLocation() == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Drop location is missing");
-            }
-            finalDropLocationId = rideTicket.getDropLocation().getId();
-        }
 
-        LocationCostDetails cost = locationCostRepo.findByCityAndPickUpAndDropLocation(
-                rideTicket.getCity().getId(),
-                rideTicket.getPickupLocation().getId(),
-                finalDropLocationId,
-                mongoTemplate);
-
-        if (cost == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pick up and Drop location not found");
-        }
-
-        rideTicket.setCost(cost.getCost());
         rideTicket.setStatus(status);
         rideTicket.setUpdatedAt(LocalDateTime.now());
         transportRepo.updateTransportStatus(rideTicket.getTransport().getId(), TransportStatus.AVAILABLE.getLabel(),

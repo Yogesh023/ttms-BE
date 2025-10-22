@@ -19,8 +19,8 @@ public interface RideTicketService {
 
     void sendOtp(String id);
 
-    void verifyOtp(String id, String otp);
+    void verifyOtp(String id, String otp, String dropLocation);
 
-    RideTicket updateRemarks(String id, String remarks, String dropLocation, String status);
+    RideTicket updateRemarks(String id, String remarks, String status);
 
 }
