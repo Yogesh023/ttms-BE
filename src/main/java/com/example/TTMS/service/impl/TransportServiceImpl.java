@@ -122,8 +122,8 @@ public class TransportServiceImpl implements TransportService {
     }
 
     @Override
-    public List<Transport> getTransportByCity(String city, int seater) {
-        return transportRepo.getTransportByCity(city, seater, mongoTemplate);
+    public List<Transport> getTransportByCity(String city) {
+        return transportRepo.getTransportByCity(city, mongoTemplate);
     }
 
     @Override

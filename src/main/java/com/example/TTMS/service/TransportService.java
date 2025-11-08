@@ -21,7 +21,7 @@ public interface TransportService {
 
     void deleteTransport(String id);
 
-    List<Transport> getTransportByCity(String city, int seater);
+    List<Transport> getTransportByCity(String city);
 
     void sendForgotPasswordLink(String userId) throws MessagingException;
 }

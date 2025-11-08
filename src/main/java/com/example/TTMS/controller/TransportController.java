@@ -43,8 +43,8 @@ public class TransportController {
     }
 
     @GetMapping("city/{city}")
-    public ApiResponse<List<Transport>> getTransportByCity(@PathVariable String city, @RequestParam(required = false) int seater) {
-        return ApiResponse.success(transportService.getTransportByCity(city, seater));
+    public ApiResponse<List<Transport>> getTransportByCity(@PathVariable String city) {
+        return ApiResponse.success(transportService.getTransportByCity(city));
     }
     
 }

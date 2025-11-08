@@ -27,6 +27,8 @@ public class RideTicket {
     private LocalDate pickupDate;
     private double cost;
     private String status;
+    private LocalDateTime rideStartTime;
+    private LocalDateTime rideEndTime;
     private String otp;
     private LocalDateTime otpExpiryTime;
     private boolean isOtpSent;

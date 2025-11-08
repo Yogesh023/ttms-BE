@@ -246,6 +246,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         }
 
         rideTicket.setStatus(Status.RIDE_STARTED.getLabel());
+        rideTicket.setRideStartTime(LocalDateTime.now());
         rideTicket.setOtpSent(false);
         rideTicket.setUpdatedAt(LocalDateTime.now());
         rideTicketRepo.save(rideTicket);
@@ -280,6 +281,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         }
 
         rideTicket.setStatus(status);
+        rideTicket.setRideEndTime(LocalDateTime.now());
         rideTicket.setUpdatedAt(LocalDateTime.now());
         transportRepo.updateTransportStatus(rideTicket.getTransport().getId(), TransportStatus.AVAILABLE.getLabel(),
                 mongoTemplate);
