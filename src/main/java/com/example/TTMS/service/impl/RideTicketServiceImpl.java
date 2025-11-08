@@ -72,6 +72,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         Map<String, Object> userDetails = jwtHelper.getUserDetails();
         String id = (String) userDetails.get("_id");
         String userId = (String) userDetails.get("userId");
+        String username = (String) userDetails.get("username");
         String role = (String) userDetails.get("role");
         User user = userRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -96,6 +97,7 @@ public class RideTicketServiceImpl implements RideTicketService {
 
         RideTicket rideTicket = new RideTicket();
         rideTicket.setUserId(userId);
+        rideTicket.setUserName(username);
         rideTicket.setMobileNo(user.getMobileNo());
         // rideTicket.setLocationCost(cost);
         rideTicket.setTransport(transport);
@@ -163,6 +165,7 @@ public class RideTicketServiceImpl implements RideTicketService {
 
         RideTicket rideTicket = new RideTicket();
         rideTicket.setUserId(user.getUserId());
+        rideTicket.setUserName(user.getUsername());
         rideTicket.setMobileNo(user.getMobileNo());
         rideTicket.setTransport(user.getTransport());
         rideTicket.setCity(user.getCity());
