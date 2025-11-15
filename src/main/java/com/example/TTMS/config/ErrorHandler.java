@@ -20,9 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ErrorHandler {
 
-    // private static final String COLLECTION_PREFIX = "collection: ";
     private static final String INDEX_PREFIX = "index: ";
-    // private static final String ERROR_MESSAGE_TEMPLATE = " in collection: ";
 
     @ExceptionHandler
     public ResponseEntity<ApiResponse<Object>> handleException(ResponseStatusException exc) {
