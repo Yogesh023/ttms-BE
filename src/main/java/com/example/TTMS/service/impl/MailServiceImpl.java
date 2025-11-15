@@ -24,7 +24,7 @@ public class MailServiceImpl implements MailService {
     final MimeMessage mimeMessage = mailSender.createMimeMessage();
         final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
         message.setSubject(subject);
-        message.setFrom("noreply@hepl.com");
+        message.setFrom("yogeshmalathy29@gmail.com");
         message.setTo(recepient);
         message.setText(content, true);
         mailSender.send(mimeMessage);
