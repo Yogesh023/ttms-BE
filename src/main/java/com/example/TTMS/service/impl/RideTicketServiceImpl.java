@@ -203,6 +203,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         } catch (MessagingException e) {
             // Email failed but OTP is still saved
         }
+        
         // if (rideTicket.isOtpSent() && rideTicket.getOtpExpiryTime() != null &&
         // rideTicket.getOtpExpiryTime().isAfter(LocalDateTime.now())) {
         // throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
