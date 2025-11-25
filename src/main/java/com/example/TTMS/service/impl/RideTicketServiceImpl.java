@@ -191,20 +191,18 @@ public class RideTicketServiceImpl implements RideTicketService {
 
         String otp = "1234";
         String content = mailTemplateService.sendOtpMail(otp, user.getUsername());
-
-        try {
-            mailService.sendMail(user.getEmail(), "Your Ride OTP", content);
-
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-
+        
         rideTicket.setOtp(otp);
         rideTicket.setOtpExpiryTime(LocalDateTime.now().plusMinutes(5));
-        rideTicket.setOtpSent(true); 
+        rideTicket.setOtpSent(true);
         rideTicket.setUpdatedAt(LocalDateTime.now());
         rideTicketRepo.save(rideTicket);
-
+        
+        try {
+            mailService.sendMail(user.getEmail(), "Your Ride OTP", content);
+        } catch (MessagingException e) {
+            // Email failed but OTP is still saved
+        }
         // if (rideTicket.isOtpSent() && rideTicket.getOtpExpiryTime() != null &&
         // rideTicket.getOtpExpiryTime().isAfter(LocalDateTime.now())) {
         // throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
