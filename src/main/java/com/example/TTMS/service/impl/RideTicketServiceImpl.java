@@ -98,6 +98,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         RideTicket rideTicket = new RideTicket();
         rideTicket.setUserId(userId);
         rideTicket.setUserName(username);
+        rideTicket.setEmail(user.getEmail());
         rideTicket.setMobileNo(user.getMobileNo());
         // rideTicket.setLocationCost(cost);
         rideTicket.setTransport(transport);
@@ -166,6 +167,7 @@ public class RideTicketServiceImpl implements RideTicketService {
         RideTicket rideTicket = new RideTicket();
         rideTicket.setUserId(user.getUserId());
         rideTicket.setUserName(user.getUsername());
+        rideTicket.setEmail(user.getEmail());
         rideTicket.setMobileNo(user.getMobileNo());
         rideTicket.setTransport(user.getTransport());
         rideTicket.setCity(user.getCity());
